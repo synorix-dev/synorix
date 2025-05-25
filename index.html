@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>pixelateda | Portfolio</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #141e30, #243b55);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .card {
+      background: #1e2a3a;
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.02);
+    }
+
+    .profile-img {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      border: 4px solid #00bfff;
+      object-fit: cover;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: 1.2em;
+      color: #aad4ff;
+      margin-bottom: 20px;
+    }
+
+    p {
+      font-size: 1em;
+      line-height: 1.6;
+      color: #d0e6ff;
+      margin-bottom: 25px;
+    }
+
+    button {
+      background-color: #00bfff;
+      color: white;
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #009ad6;
+    }
+
+    @media (max-width: 500px) {
+      .card {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <img src="1000244801.png" alt="Profile Picture" class="profile-img" />
+    <h1>pixelateda</h1>
+    <h2>Discord Community Manager & Minecraft Developer</h2>
+    <p>
+      With 3 years of experience in managing vibrant Discord communities and 2 years of developing custom Minecraft servers, I help bring online worlds to life with structure, creativity, and strategy.
+    </p>
+    <button onclick="contactMe()">Contact Me</button>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+</html>
