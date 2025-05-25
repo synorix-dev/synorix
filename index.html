@@ -79,6 +79,42 @@
       background-color: #009ad6;
     }
 
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: #2d3e50;
+      padding: 20px 30px;
+      border-radius: 10px;
+      text-align: center;
+      color: #fff;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .close {
+      margin-top: 15px;
+      background-color: #00bfff;
+      border: none;
+      padding: 10px 20px;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      background-color: #008ac4;
+    }
+
     @media (max-width: 500px) {
       .card {
         padding: 20px;
@@ -99,6 +135,15 @@
       With 3 years of experience in managing vibrant Discord communities and 2 years of developing custom Minecraft servers, I help bring online worlds to life with structure, creativity, and strategy.
     </p>
     <button onclick="contactMe()">Contact Me</button>
+  </div>
+
+  <!-- Custom Modal -->
+  <div class="modal" id="contactModal">
+    <div class="modal-content">
+      <h3>Contact Info</h3>
+      <p>Discord: <strong>pixelateda</strong></p>
+      <button class="close" onclick="closeModal()">Close</button>
+    </div>
   </div>
 
   <script src="index.js"></script>
