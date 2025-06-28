@@ -1,151 +1,316 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>pixelateda | Portfolio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>xyzRobin | Discord & Minecraft Server Developer</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+    :root {
+      --bg-dark: #1E1F22;
+      --card-dark: #2B2D31;
+      --accent: #9155FD;
+      --accent-hover: #7B45E6;
+      --text-light: #E1E1E1;
+      --text-muted: #A1A3A8;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      --border-radius: 14px;
+      --shadow: rgba(14, 13, 18, 0.7);
+    }
+
     * {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
     }
 
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #141e30, #243b55);
-      color: #fff;
+      margin: 0;
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+      font-family: var(--font);
+      line-height: 1.58;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      user-select: none;
+    }
+
+    header {
+      background: linear-gradient(90deg, #25262a, #1a1b1e);
+      padding: 1.6rem 3rem;
       display: flex;
       align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 20px;
+      box-shadow: 0 4px 20px var(--shadow);
+    }
+
+    header img.profile-pic {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      margin-right: 1.3rem;
+      object-fit: cover;
+      border: 3px solid var(--accent);
+      box-shadow: 0 0 20px var(--accent);
+      flex-shrink: 0;
+      transition: box-shadow 0.3s ease;
+    }
+
+    header img.profile-pic:hover {
+      box-shadow: 0 0 30px var(--accent-hover);
+    }
+
+    header h1 {
+      font-weight: 700;
+      font-size: 2.1rem;
+      color: var(--accent);
+      letter-spacing: 1.2px;
+      margin: 0;
+      user-select: text;
+      flex-grow: 1;
+    }
+
+    nav {
+      display: flex;
+      gap: 2.8rem;
+    }
+
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.05rem;
+      position: relative;
+      transition: color var(--transition);
+      cursor: pointer;
+      user-select: none;
+      padding-bottom: 4px;
+    }
+
+    nav a::after {
+      content: "";
+      position: absolute;
+      width: 0%;
+      height: 3px;
+      background: var(--accent);
+      left: 0;
+      bottom: 0;
+      border-radius: 10px;
+      transition: width var(--transition);
+    }
+
+    nav a:hover,
+    nav a:focus {
+      color: var(--accent);
+      outline: none;
+    }
+
+    nav a:hover::after,
+    nav a:focus::after {
+      width: 100%;
+    }
+
+    main.container {
+      flex-grow: 1;
+      max-width: 900px;
+      margin: 3rem auto 5rem;
+      padding: 0 1rem;
+    }
+
+    section {
+      margin-bottom: 5rem;
+    }
+
+    .section-title {
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 1.6rem;
+      border-bottom: 4px solid var(--accent);
+      padding-bottom: 0.5rem;
+      user-select: none;
     }
 
     .card {
-      background: #1e2a3a;
-      border-radius: 16px;
-      padding: 30px;
-      max-width: 500px;
-      width: 100%;
-      text-align: center;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-      transition: transform 0.3s ease;
+      background-color: var(--card-dark);
+      border-radius: var(--border-radius);
+      box-shadow: 0 12px 30px var(--shadow);
+      padding: 2.4rem 2.6rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card + .card {
+      margin-top: 2.2rem;
     }
 
     .card:hover {
-      transform: scale(1.02);
+      transform: translateY(-7px);
+      box-shadow: 0 18px 35px var(--shadow);
     }
 
-    .profile-img {
-      width: 130px;
-      height: 130px;
-      border-radius: 50%;
-      border: 4px solid #00bfff;
-      object-fit: cover;
-      margin-bottom: 20px;
+    p, li {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-top: 0.7rem;
+      user-select: text;
+      letter-spacing: 0.02em;
     }
 
-    h1 {
-      font-size: 2.5em;
-      margin-bottom: 10px;
+    ul.skills-list {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.1rem;
+      margin: 0;
     }
 
-    h2 {
-      font-size: 1.2em;
-      color: #aad4ff;
-      margin-bottom: 20px;
-    }
-
-    p {
-      font-size: 1em;
-      line-height: 1.6;
-      color: #d0e6ff;
-      margin-bottom: 25px;
-    }
-
-    button {
-      background-color: #00bfff;
+    ul.skills-list li {
+      background: linear-gradient(145deg, #9f7aff, #7f59f4);
       color: white;
-      padding: 12px 24px;
-      font-size: 16px;
-      border: none;
-      border-radius: 6px;
+      padding: 0.6rem 1.5rem;
+      font-weight: 700;
+      border-radius: 60px;
+      user-select: none;
+      box-shadow: 0 5px 15px rgba(145, 85, 253, 0.75);
+      transition: background 0.3s ease;
+      cursor: default;
+    }
+
+    ul.skills-list li:hover {
+      background: linear-gradient(145deg, #7f59f4, #9f7aff);
+    }
+
+    h3.project-title {
+      font-weight: 700;
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+      color: var(--accent);
+      user-select: none;
+    }
+
+    .contact-buttons {
+      display: flex;
+      gap: 1.7rem;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+
+    a.contact-btn {
+      background: linear-gradient(145deg, #9155fd, #7b45e6);
+      color: white;
+      padding: 0.85rem 2.1rem;
+      font-size: 1.05rem;
+      font-weight: 700;
+      border-radius: var(--border-radius);
       cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    button:hover {
-      background-color: #009ad6;
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 10;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.6);
-      justify-content: center;
+      box-shadow: 0 8px 25px rgba(145, 85, 253, 0.85);
+      transition: background var(--transition), box-shadow var(--transition);
+      user-select: none;
+      text-decoration: none;
+      display: inline-flex;
       align-items: center;
+      justify-content: center;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      letter-spacing: 0.04em;
     }
 
-    .modal-content {
-      background-color: #2d3e50;
-      padding: 20px 30px;
-      border-radius: 10px;
+    a.contact-btn:hover,
+    a.contact-btn:focus {
+      background: linear-gradient(145deg, #7b45e6, #9155fd);
+      box-shadow: 0 12px 35px rgba(123, 69, 230, 0.95);
+      outline: none;
+    }
+
+    footer {
       text-align: center;
-      color: #fff;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+      padding: 2.6rem 1rem;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      user-select: none;
+      border-top: 1px solid #444;
+      background-color: var(--card-dark);
+      box-shadow: inset 0 3px 10px var(--shadow);
+      letter-spacing: 0.03em;
     }
 
-    .close {
-      margin-top: 15px;
-      background-color: #00bfff;
-      border: none;
-      padding: 10px 20px;
-      color: white;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .close:hover {
-      background-color: #008ac4;
-    }
-
-    @media (max-width: 500px) {
-      .card {
-        padding: 20px;
+    /* Responsive */
+    @media (max-width: 600px) {
+      nav {
+        gap: 1.2rem;
       }
 
-      h1 {
-        font-size: 2em;
+      nav a {
+        font-size: 0.95rem;
+      }
+
+      .contact-buttons {
+        justify-content: center;
       }
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <img src="1000244801.png" alt="Profile Picture" class="profile-img" />
-    <h1>pixelateda</h1>
-    <h2>Discord Community Manager & Minecraft Developer</h2>
-    <p>
-      With 3 years of experience in managing vibrant Discord communities and 2 years of developing custom Minecraft servers, I help bring online worlds to life with structure, creativity, and strategy.
-    </p>
-    <button onclick="contactMe()">Contact Me</button>
-  </div>
+  <header>
+    <img src="https://cdn.discordapp.com/attachments/1388526547354255400/1388526585799245904/e723897a9c2594fe19fcdc6fd7277375.jpg?ex=68614da7&is=685ffc27&hm=2ab46e76edfd6f8708597da7828634d93ced7dd586c3d9cf2fcce1b9ac0194b5&" alt="xyzRobin Profile Picture" class="profile-pic" />
+    <h1>xyzRobin</h1>
+    <nav>
+      <a href="#about" tabindex="1">About</a>
+      <a href="#skills" tabindex="2">Skills</a>
+      <a href="#projects" tabindex="3">Projects</a>
+      <a href="#contact" tabindex="4">Contact</a>
+    </nav>
+  </header>
 
-  <!-- Custom Modal -->
-  <div class="modal" id="contactModal">
-    <div class="modal-content">
-      <h3>Contact Info</h3>
-      <p>Discord: <strong>pixelateda</strong></p>
-      <button class="close" onclick="closeModal()">Close</button>
-    </div>
-  </div>
+  <main class="container" role="main">
+    <section id="about" tabindex="0">
+      <h2 class="section-title">About Me</h2>
+      <article class="card">
+        <p>Hello! I'm <strong>xyzRobin</strong>, a professional Discord bot and Minecraft server developer with 2 years of experience. I focus on crafting efficient Discord bots and configuring Minecraft servers to power thriving communities.</p>
+        <p>I have worked on over 20 Minecraft servers, including prominent ones like <em>SeasonCraft</em>, <em>SeasonMc</em>, <em>OrganicMc</em>, and <em>RifleMc</em>. My expertise lies in creating seamless server environments and building smart automation through bots.</p>
+      </article>
+    </section>
 
-  <script src="index.js"></script>
+    <section id="skills" tabindex="0">
+      <h2 class="section-title">Skills</h2>
+      <ul class="skills-list" aria-label="Skills list">
+        <li>JavaScript</li>
+        <li>Node.js</li>
+        <li>MongoDB</li>
+        <li>Minecraft Server Configuration</li>
+      </ul>
+    </section>
+
+    <section id="projects" tabindex="0">
+      <h2 class="section-title">Projects</h2>
+      <article class="card" aria-label="Project: YEPIE">
+        <h3 class="project-title">YEPIE <span style="font-weight: 400; font-size: 0.95rem; color: var(--text-muted);">(Full-Time Project)</span></h3>
+        <p>My full-time passion project — YEPIE is a sophisticated Discord bot platform designed to empower communities with automation, moderation, and premium features. I’m building it from the ground up, focusing on performance, security, and user experience.</p>
+      </article>
+
+      <article class="card" aria-label="Project: SeasonCraft Bot">
+        <h3 class="project-title">SeasonCraft Bot</h3>
+        <p>A feature-rich bot tailored for the SeasonCraft community including staff applications, ticket systems, verification, and anti-nuke protection.</p>
+      </article>
+    </section>
+
+    <section id="contact" tabindex="0">
+      <h2 class="section-title">Contact Me</h2>
+      <div class="card contact-buttons" role="group" aria-label="Contact options">
+        <a class="contact-btn" href="https://discord.com/users/1377683336721596586" target="_blank" rel="noopener noreferrer" aria-label="Discord Profile Link">Discord</a>
+        <a class="contact-btn" href="mailto:devxyzrobin@gmail.com" aria-label="Send Email">Email</a>
+        <a class="contact-btn" href="#" onclick="alert('Currently no GitHub account available.')" aria-label="GitHub account">GitHub</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © 2025 xyzRobin. Crafted with precision and passion.
+  </footer>
 </body>
 </html>
