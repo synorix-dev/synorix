@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>xyzRobin | Discord & Minecraft Server Developer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0f0f11;
+      --glass-bg: rgba(43, 45, 49, 0.35);
+      --accent: #a770ef;
+      --accent2: #fdb99b;
+      --text: #e5e5e5;
+      --muted: #a1a1aa;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem 3rem;
+      background: linear-gradient(90deg, #1a1b1e, #0f0f11);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .profile-pic {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: 3px solid var(--accent);
+      object-fit: cover;
+      box-shadow: 0 0 20px var(--accent);
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      background: linear-gradient(to right, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    nav {
+      display: flex;
+      gap: 2rem;
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 600;
+      position: relative;
+    }
+
+    nav a::after {
+      content: "";
+      position: absolute;
+      width: 0%;
+      height: 2px;
+      background: var(--accent);
+      left: 0;
+      bottom: -4px;
+      transition: 0.3s;
+    }
+
+    nav a:hover {
+      color: var(--text);
+    }
+
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 3rem auto;
+      padding: 0 2rem;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      background: linear-gradient(to right, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .card {
+      background: var(--glass-bg);
+      padding: 2rem;
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+      margin-bottom: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    ul.skills {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    ul.skills li {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      padding: 0.5rem 1.2rem;
+      border-radius: 999px;
+      color: #000;
+      font-weight: bold;
+    }
+
+    .contact-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .contact-buttons a {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      padding: 0.8rem 2rem;
+      border-radius: 999px;
+      color: #000;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .contact-buttons a:hover {
+      transform: translateY(-2px);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://cdn.discordapp.com/attachments/1388526547354255400/1388526585799245904/e723897a9c2594fe19fcdc6fd7277375.jpg" alt="xyzRobin" class="profile-pic" />
+    <h1>xyzRobin</h1>
+    <nav>
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#worklist">Worklist</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section id="about">
+      <h2 class="section-title">About Me</h2>
+      <div class="card">
+        <p>Hey! I’m <strong>xyzRobin</strong>, a Discord bot developer and Minecraft server configurator. With over 2 years of experience, I build automation systems and balanced Minecraft setups for smooth, engaging experiences.</p>
+      </div>
+    </section>
+
+    <section id="skills">
+      <h2 class="section-title">Skills</h2>
+      <div class="card">
+        <ul class="skills">
+          <li>JavaScript</li>
+          <li>Node.js</li>
+          <li>MongoDB</li>
+          <li>Discord.js</li>
+          <li>Plugin Configuration</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="projects">
+      <h2 class="section-title">Projects</h2>
+      <div class="card">
+        <strong>YEPIE</strong> – A modular premium Discord bot system supporting tickets, anti-nuke, verification, and automation features.
+      </div>
+    </section>
+
+    <section id="worklist">
+      <h2 class="section-title">Worklist</h2>
+      <div class="card">
+        <ul>
+          <li><strong>SeasonCraft</strong> — Full-time Discord Bot Dev [Left]</li>
+          <li><strong>RifleMc</strong> — Tickets, moderation systems [Closed]</li>
+          <li><strong>GamerzNetwork</strong> — Verification, economy [Closed]</li>
+          <li><strong>ShadowMcAternos</strong> — Full Minecraft + Bot Setup [Closed]</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="contact">
+      <h2 class="section-title">Contact Me</h2>
+      <div class="card contact-buttons">
+        <a href="https://discord.com/users/1377683336721596586" target="_blank">Discord</a>
+        <a href="mailto:devxyzrobin@gmail.com">Email</a>
+        <a href="#" onclick="alert('No GitHub linked yet')">GitHub</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © 2025 xyzRobin — Crafting better systems, one line at a time.
+  </footer>
+</body>
+</html>
