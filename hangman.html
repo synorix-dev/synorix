@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hangman Game | Premium UI</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap');
+
+  :root {
+    --bg-dark: #121212;
+    --bg-light: #f9f9f9;
+    --text-light: #f0f0f0;
+    --text-dark: #222;
+    --accent-color: #e74c3c;
+    --correct-color: #4caf50;
+    --wrong-color: #e74c3c;
+    --border-radius: 12px;
+    --transition-speed: 0.3s;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-light);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 2rem 1rem 3rem;
+    transition: background-color var(--transition-speed);
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+  }
+
+  body.light {
+    background: var(--bg-light);
+    color: var(--text-dark);
+  }
+
+  h1 {
+    font-weight: 700;
+    margin-bottom: 1rem;
+    font-size: 2.5rem;
+    user-select: none;
+  }
+
+  .game-container {
+    background: var(--bg-dark);
+    border-radius: var(--border-radius);
+    padding: 1.5rem 2rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    width: 350px;
+    max-width: 95vw;
+  }
+
+  body.light .game-container {
+    background: var(--bg-light);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  }
+
+  .word {
+    display: flex;
+    justify-content: center;
+    font-size: 2.4rem;
+    letter-spacing: 0.4rem;
+    margin-bottom: 1.5rem;
+    user-select: none;
+  }
+
+  .letter {
+    border-bottom: 3px solid var(--text-light);
+    width: 1.5rem;
+    text-align: center;
+    padding: 0 0.2rem;
+    text-transform: uppercase;
+  }
+
+  body.light .letter {
+    border-color: var(--text-dark);
+  }
+
+  .letter.correct {
+    color: var(--correct-color);
+    border-color: var(--correct-color);
+  }
+
+  .letter.wrong {
+    color: var(--wrong-color);
+    border-color: var(--wrong-color);
+  }
+
+  .keyboard {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    user-select: none;
+  }
+
+  .key {
+    background-color: #444;
+    border-radius: 8px;
+    padding: 0.6rem 0.8rem;
+    min-width: 32px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: background-color var(--transition-speed);
+    user-select: none;
+  }
+
+  .key:hover:not(.disabled) {
+    background-color: #666;
+  }
+
+  .key.disabled {
+    background-color: #222;
+    color: #777;
+    cursor: not-allowed;
+  }
+
+  body.light .key {
+    background-color: #ddd;
+    color: var(--text-dark);
+  }
+
+  body.light .key:hover:not(.disabled) {
+    background-color: #bbb;
+  }
+
+  body.light .key.disabled {
+    background-color: #eee;
+    color: #aaa;
+  }
+
+  .hangman-figure {
+    margin: 1.5rem auto 1rem;
+    width: 150px;
+    height: 200px;
+    position: relative;
+  }
+
+  /* Gallows */
+  .hangman-figure .pole {
+    position: absolute;
+    background-color: var(--text-light);
+  }
+
+  body.light .hangman-figure .pole {
+    background-color: var(--text-dark);
+  }
+
+  .pole.base {
+    bottom: 0;
+    left: 0;
+    width: 150px;
+    height: 10px;
+    border-radius: 5px;
+  }
+
+  .pole.vert {
+    bottom: 10px;
+    left: 25px;
+    width: 10px;
+    height: 190px;
+    border-radius: 5px;
+  }
+
+  .pole.horz {
+    top: 0;
+    left: 25px;
+    width: 90px;
+    height: 10px;
+    border-radius: 5px;
+  }
+
+  .pole.rope {
+    top: 10px;
+    left: 110px;
+    width: 4px;
+    height: 30px;
+    border-radius: 2px;
+  }
+
+  /* Hangman parts */
+  .hangman-part {
+    position: absolute;
+    border-radius: 50%;
+    background-color: var(--accent-color);
+  }
+
+  /* Head */
+  .head {
+    top: 40px;
+    left: 90px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: transparent;
+    border: 5px solid var(--accent-color);
+  }
+
+  /* Body */
+  .body {
+    top: 80px;
+    left: 108px;
+    width: 8px;
+    height: 70px;
+    background-color: var(--accent-color);
+    border-radius: 4px;
+  }
+
+  /* Left arm */
+  .arm-left {
+    top: 95px;
+    left: 78px;
+    width: 8px;
+    height: 40px;
+    background-color: var(--accent-color);
+    border-radius: 4px;
+    transform-origin: top right;
+    transform: rotate(-40deg);
+  }
+
+  /* Right arm */
+  .arm-right {
+    top: 95px;
+    left: 116px;
+    width: 8px;
+    height: 40px;
+    background-color: var(--accent-color);
+    border-radius: 4px;
+    transform-origin: top left;
+    transform: rotate(40deg);
+  }
+
+  /* Left leg */
+  .leg-left {
+    top: 148px;
+    left: 90px;
+    width: 8px;
+    height: 45px;
+    background-color: var(--accent-color);
+    border-radius: 4px;
+    transform-origin: top right;
+    transform: rotate(40deg);
+  }
+
+  /* Right leg */
+  .leg-right {
+    top: 148px;
+    left: 110px;
+    width: 8px;
+    height: 45px;
+    background-color: var(--accent-color);
+    border-radius: 4px;
+    transform-origin: top left;
+    transform: rotate(-40deg);
+  }
+
+  .message {
+    margin-top: 1.5rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+    user-select: none;
+    text-align: center;
+    min-height: 1.5em;
+  }
+
+  button#reset-btn {
+    margin-top: 1rem;
+    padding: 0.7rem 1.4rem;
+    background-color: #4a90e2;
+    border: none;
+    border-radius: var(--border-radius);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color var(--transition-speed);
+    user-select: none;
+    width: 100%;
+    font-size: 1.1rem;
+  }
+
+  button#reset-btn:hover {
+    background-color: #367adf;
+  }
+
+  .toggle-theme {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: #4a90e2;
+    border: none;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 15px rgba(58,123,213,0.5);
+    transition: background-color var(--transition-speed);
+  }
+
+  .toggle-theme:hover {
+    background: #367adf;
+  }
+
+  .toggle-theme svg {
+    fill: white;
+    width: 24px;
+    height: 24px;
+  }
+</style>
+</head>
+<body>
+
+<button class="toggle-theme" aria-label="Toggle Light/Dark Mode" title="Toggle Light/Dark Mode">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M12 2a9.93 9.93 0 0 0-3.687.67 7.98 7.98 0 1 0 9.718 9.72A9.93 9.93 0 0 0 12 2zm0 16a7 7 0 1 1 0-14 7 7 0 0 1 0 14z"/>
+  </svg>
+</button>
+
+<h1>Hangman</h1>
+
+<div class="game-container" role="main" aria-label="Hangman game">
+  <div class="hangman-figure" aria-hidden="true">
+    <div class="pole base"></div>
+    <div class="pole vert"></div>
+    <div class="pole horz"></div>
+    <div class="pole rope"></div>
+
+    <!-- Hangman parts -->
+    <div class="head hangman-part" style="display:none;"></div>
+    <div class="body hangman-part" style="display:none;"></div>
+    <div class="arm-left hangman-part" style="display:none;"></div>
+    <div class="arm-right hangman-part" style="display:none;"></div>
+    <div class="leg-left hangman-part" style="display:none;"></div>
+    <div class="leg-right hangman-part" style="display:none;"></div>
+  </div>
+
+  <div class="word" aria-live="polite" aria-atomic="true" aria-label="Word to guess"></div>
+
+  <div class="keyboard" role="list" aria-label="Keyboard letters">
+    <!-- JS will populate keys -->
+  </div>
+
+  <div class="message" role="alert" aria-live="assertive"></div>
+
+  <button id="reset-btn" aria-label="Restart Game">Restart Game</button>
+</div>
+
+<script>
+(() => {
+  const words = [
+    "javascript", "programming", "hangman", "developer", "challenge", "function",
+    "variable", "internet", "browser", "computer", "software", "hardware",
+    "algorithm", "coding", "design", "debugging", "frontend", "backend"
+  ];
+
+  const maxWrong = 6; // number of hangman parts
+
+  const hangmanParts = Array.from(document.querySelectorAll('.hangman-part'));
+  const wordContainer = document.querySelector('.word');
+  const keyboard = document.querySelector('.keyboard');
+  const message = document.querySelector('.message');
+  const resetBtn = document.getElementById('reset-btn');
+  const toggleThemeBtn = document.querySelector('.toggle-theme');
+
+  let selectedWord = '';
+  let guessedLetters = new Set();
+  let wrongGuesses = 0;
+  let gameOver = false;
+
+  // Create keyboard buttons
+  function createKeyboard() {
+    keyboard.innerHTML = '';
+    for (let i = 65; i <= 90; i++) {
+      const letter = String.fromCharCode(i);
+      const btn = document.createElement('button');
+      btn.className = 'key';
+      btn.textContent = letter;
+      btn.setAttribute('role', 'listitem');
+      btn.setAttribute('aria-label', `Letter ${letter}`);
+      btn.addEventListener('click', () => {
+        if (gameOver) return;
+        guessLetter(letter.toLowerCase());
+      });
+      keyboard.appendChild(btn);
+    }
+  }
+
+  // Display current word state
+  function displayWord() {
+    wordContainer.innerHTML = '';
+    selectedWord.split('').forEach(letter => {
+      const span = document.createElement('span');
+      span.className = 'letter';
+      if (guessedLetters.has(letter)) {
+        span.textContent = letter.toUpperCase();
+        span.classList.add('correct');
+      } else {
+        span.textContent = ' ';
+      }
+      wordContainer.appendChild(span);
+    });
+  }
+
+  // Update hangman figure parts based on wrong guesses
+  function updateHangman() {
+    hangmanParts.forEach((part, idx) => {
+      part.style.display = idx < wrongGuesses ? 'block' : 'none';
+    });
+  }
+
+  // Disable guessed key button
+  function disableKey(letter) {
+    const btn = [...keyboard.children].find(b => b.textContent.toLowerCase() === letter);
+    if (btn) btn.classList.add('disabled');
+  }
+
+  // Check if user won
+  function checkWin() {
+    return selectedWord.split('').every(letter => guessedLetters.has(letter));
+  }
+
+  // Handle a letter guess
+  function guessLetter(letter) {
+    if (guessedLetters.has(letter) || gameOver) return;
+    guessedLetters.add(letter);
+    disableKey(letter);
+
+    if (selectedWord.includes(letter)) {
+      displayWord();
+      if (checkWin()) {
+        message.textContent = '🎉 You Won! Great job!';
+        gameOver = true;
+      } else {
+        message.textContent = 'Good guess!';
+      }
+    } else {
+      wrongGuesses++;
+      updateHangman();
+      if (wrongGuesses >= maxWrong) {
+        message.textContent = `😞 Game Over! The word was "${selectedWord.toUpperCase()}"`;
+        revealWord();
+        gameOver = true;
+      } else {
+        message.textContent = 'Wrong guess, try again.';
+      }
+    }
+  }
+
+  // Reveal full word on loss
+  function revealWord() {
+    wordContainer.innerHTML = '';
+    selectedWord.split('').forEach(letter => {
+      const span = document.createElement('span');
+      span.className = 'letter wrong';
+      span.textContent = letter.toUpperCase();
+      wordContainer.appendChild(span);
+    });
+  }
+
+  // Start a new game
+  function resetGame() {
+    selectedWord = words[Math.floor(Math.random() * words.length)];
+    guessedLetters.clear();
+    wrongGuesses = 0;
+    gameOver = false;
+    message.textContent = '';
+    updateHangman();
+    displayWord();
+    createKeyboard();
+  }
+
+  // Keyboard event listener for physical keyboard
+  window.addEventListener('keydown', e => {
+    if (gameOver) return;
+    const key = e.key.toLowerCase();
+    if (/^[a-z]$/.test(key)) {
+      guessLetter(key);
+    }
+  });
+
+  resetBtn.addEventListener('click', resetGame);
+
+  toggleThemeBtn.addEventListener('click', () => {
+    document.body.classList.toggle('light');
+  });
+
+  // Initialize
+  resetGame();
+})();
+</script>
+
+</body>
+</html>
