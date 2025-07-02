@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Generator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0d0d0d;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+    h1 {
+      font-size: 2.4rem;
+      color: #00ff99;
+      margin-bottom: 2rem;
+    }
+    input {
+      padding: 1rem;
+      font-size: 1.1rem;
+      width: 100%;
+      max-width: 400px;
+      border-radius: 8px;
+      border: none;
+      background: #1e1e1e;
+      color: #fff;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      background: #00ff99;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #qrcode {
+      margin-top: 2rem;
+      background: white;
+      padding: 1rem;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>QR Code Generator</h1>
+<input type="text" id="qrInput" placeholder="Enter text or URL" />
+<button onclick="generateQRCode()">Generate QR Code</button>
+<div id="qrcode"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<script>
+  function generateQRCode() {
+    const text = document.getElementById('qrInput').value.trim();
+    const container = document.getElementById('qrcode');
+    container.innerHTML = '';
+    if (!text) return alert('Please enter text or URL');
+    QRCode.toCanvas(document.createElement('canvas'), text, { width: 256 }, function (err, canvas) {
+      if (err) return console.error(err);
+      container.appendChild(canvas);
+    });
+  }
+</script>
+
+</body>
+</html>
