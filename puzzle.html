@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Emoji Puzzle Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #FFDEE9, #B5FFFC);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    #game-container {
+      background: white;
+      border-radius: 20px;
+      padding: 30px 40px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 90%;
+      max-width: 500px;
+    }
+
+    #emoji {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+
+    input {
+      padding: 10px;
+      width: 80%;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background-color: #88C9E4;
+      color: white;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #6AAFD1;
+    }
+
+    #status {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    #scoreboard {
+      margin-top: 15px;
+      font-size: 0.95rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>🤔 Emoji Puzzle Game</h1>
+  <div id="game-container">
+    <div id="emoji">🍕🏠</div>
+    <input type="text" id="answerInput" placeholder="Your Answer...">
+    <div>
+      <button onclick="checkAnswer()">Check</button>
+      <button onclick="useHint()">Hint</button>
+      <button onclick="skip()">Skip</button>
+    </div>
+    <div id="status"></div>
+    <div id="scoreboard">Score: <span id="score">0</span> | Lives: <span id="lives">3</span></div>
+  </div>
+
+  <script>
+    const puzzles = [
+      { emojis: "🍕🏠", answer: "pizza hut" },
+      { emojis: "🧊❄️👑", answer: "frozen" },
+      { emojis: "🚗⚡️🏁", answer: "fast and furious" },
+      { emojis: "🕷️🧔🕸️", answer: "spiderman" },
+      { emojis: "🎥👻", answer: "ghost movie" },
+      { emojis: "👨‍⚖️📚🧑‍⚖️", answer: "court case" },
+      { emojis: "🦁👑", answer: "lion king" },
+      { emojis: "🐍👓⚡", answer: "harry potter" },
+      { emojis: "🦕🦖🌋", answer: "jurassic park" },
+      { emojis: "🦇🌃🤵", answer: "batman" },
+      { emojis: "☕👩‍⚕️🏥", answer: "coffee break" },
+      { emojis: "👨‍🚀🌕", answer: "moon mission" },
+      { emojis: "🍿🎬", answer: "movie time" },
+      { emojis: "🌍🔥", answer: "global warming" },
+      { emojis: "📸🎞️", answer: "photo film" },
+      { emojis: "🪓🪵", answer: "wood cutter" },
+      { emojis: "👶🍼🛏️", answer: "baby sleep" },
+      { emojis: "🍎📱", answer: "apple iphone" },
+      { emojis: "🎮🕹️", answer: "video game" },
+      { emojis: "🧠🔍", answer: "mind reader" },
+      { emojis: "🔫💰🚓", answer: "bank robbery" },
+      { emojis: "🦷🧑‍⚕️", answer: "dentist" },
+      { emojis: "🚿🧼", answer: "shower time" },
+      { emojis: "🍰🎉", answer: "birthday party" },
+      { emojis: "📚🎓", answer: "graduation" },
+      { emojis: "🍞🧈", answer: "bread and butter" },
+      { emojis: "💤📱", answer: "sleep mode" },
+      { emojis: "👨‍🏫📖", answer: "teacher" },
+      { emojis: "🌊🚢", answer: "titanic" },
+      { emojis: "🎯🏹", answer: "archery" },
+      { emojis: "🦄🌈", answer: "unicorn rainbow" },
+      { emojis: "🧌🔦", answer: "monster hunt" },
+      { emojis: "🐱🐭🐶", answer: "pets" },
+      { emojis: "🌧️☔", answer: "rainy day" },
+      { emojis: "🌞🏖️", answer: "sunny beach" },
+      { emojis: "🕵️‍♂️🔎", answer: "detective" },
+      { emojis: "🧛‍♂️🦇", answer: "vampire" },
+      { emojis: "🧜‍♀️🌊", answer: "mermaid" },
+      { emojis: "🪙💰", answer: "rich" },
+      { emojis: "📖👻", answer: "ghost story" },
+      { emojis: "🐦📦", answer: "twitter box" },
+      { emojis: "🍫🍪", answer: "choco chip" }
+    ];
+
+    let current = 0;
+    let score = 0;
+    let lives = 3;
+    let hintsUsed = 0;
+
+    const emojiEl = document.getElementById("emoji");
+    const inputEl = document.getElementById("answerInput");
+    const statusEl = document.getElementById("status");
+    const scoreEl = document.getElementById("score");
+    const livesEl = document.getElementById("lives");
+
+    function loadPuzzle() {
+      const puzzle = puzzles[current];
+      emojiEl.textContent = puzzle.emojis;
+      inputEl.value = "";
+      statusEl.textContent = "";
+    }
+
+    function checkAnswer() {
+      const userAnswer = inputEl.value.trim().toLowerCase();
+      if (userAnswer === puzzles[current].answer.toLowerCase()) {
+        score += 10;
+        statusEl.style.color = "green";
+        statusEl.textContent = "✅ Correct!";
+        nextPuzzle();
+      } else {
+        lives--;
+        statusEl.style.color = "red";
+        statusEl.textContent = "❌ Incorrect!";
+        if (lives === 0) {
+          alert("Game Over! Your Score: " + score);
+          resetGame();
+        }
+      }
+      updateUI();
+    }
+
+    function useHint() {
+      const answer = puzzles[current].answer;
+      const revealed = answer.slice(0, 1) + "*".repeat(answer.length - 1);
+      statusEl.style.color = "#333";
+      statusEl.textContent = `Hint: ${revealed}`;
+      hintsUsed++;
+      score = Math.max(0, score - 2); // Penalty for hint
+      updateUI();
+    }
+
+    function skip() {
+      lives--;
+      statusEl.style.color = "orange";
+      statusEl.textContent = "⏭️ Skipped!";
+      if (lives === 0) {
+        alert("Game Over! Your Score: " + score);
+        resetGame();
+        return;
+      }
+      nextPuzzle();
+      updateUI();
+    }
+
+    function nextPuzzle() {
+      current++;
+      if (current >= puzzles.length) {
+        alert("🎉 You've finished all puzzles! Final Score: " + score);
+        resetGame();
+      } else {
+        loadPuzzle();
+      }
+    }
+
+    function resetGame() {
+      current = 0;
+      score = 0;
+      lives = 3;
+      hintsUsed = 0;
+      loadPuzzle();
+      updateUI();
+    }
+
+    function updateUI() {
+      scoreEl.textContent = score;
+      livesEl.textContent = lives;
+    }
+
+    loadPuzzle();
+  </script>
+</body>
+</html>
