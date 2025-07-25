@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Fake School Control Panel</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #1a1a2e;
+    color: #eee;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  header {
+    background: #16213e;
+    padding: 1rem 2rem;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    user-select: none;
+  }
+  main {
+    flex: 1;
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+  .info-panel {
+    background: #0f3460;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 0 15px #0f3460aa;
+  }
+  .info-panel h2 {
+    margin-top: 0;
+    color: #e94560;
+  }
+  .info-list {
+    list-style: none;
+    padding-left: 0;
+    font-size: 1.1rem;
+  }
+  .info-list li {
+    padding: 0.3rem 0;
+    border-bottom: 1px solid #16213e;
+  }
+  .buttons-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+  }
+  .btn {
+    background: #0f3460;
+    border: none;
+    border-radius: 6px;
+    padding: 1rem 1.5rem;
+    color: #eee;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 3px 5px #000000bb;
+    user-select: none;
+    transition: all 0.3s ease;
+    min-width: 140px;
+    text-align: center;
+    position: relative;
+  }
+  .btn:hover {
+    background: #e94560;
+    box-shadow: 0 0 10px #e94560aa;
+  }
+  .btn.active {
+    background: #00b894;
+    box-shadow: 0 0 12px #00b894cc;
+  }
+  .btn:focus {
+    outline: none;
+  }
+  footer {
+    background: #16213e;
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.9rem;
+    color: #777;
+  }
+</style>
+</head>
+<body>
+
+<header>Sunnydale High - Control Panel</header>
+
+<main>
+  <section class="info-panel">
+    <h2>School Info</h2>
+    <ul class="info-list">
+      <li><strong>Name:</strong> Sunnydale High School</li>
+      <li><strong>Address:</strong> 123 School Lane, Springfield</li>
+      <li><strong>Principal:</strong> Mr. John Smith</li>
+      <li><strong>Students:</strong> 1,200</li>
+      <li><strong>Teachers:</strong> 75</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Controls</h2>
+    <div class="buttons-container">
+      <button class="btn" data-label="School Change">School Change</button>
+      <button class="btn" data-label="All Doors Open">All Doors Open</button>
+      <button class="btn" data-label="Camera">Camera</button>
+      <button class="btn" data-label="Room 101">Room 101</button>
+      <button class="btn" data-label="Room 102">Room 102</button>
+      <button class="btn" data-label="Floor 1">Floor 1</button>
+      <button class="btn" data-label="Floor 2">Floor 2</button>
+      <button class="btn" data-label="Principal Cabin">Principal Cabin</button>
+      <button class="btn" data-label="Alarm">Alarm</button>
+      <button class="btn" data-label="Lights">Lights</button>
+      <button class="btn" data-label="Fire Drill">Fire Drill</button>
+      <button class="btn" data-label="Lockdown">Lockdown</button>
+      <button class="btn" data-label="Announcement">Announcement</button>
+      <button class="btn" data-label="Security">Security</button>
+      <button class="btn" data-label="Library">Library</button>
+      <button class="btn" data-label="Cafeteria">Cafeteria</button>
+    </div>
+  </section>
+</main>
+
+<footer>© 2025 Sunnydale High School | This is a fake control panel for fun only.</footer>
+
+<script>
+  // Add toggle on/off for buttons
+  document.querySelectorAll('.btn').forEach(button => {
+    button.addEventListener('click', () => {
+      button.classList.toggle('active');
+      // Optional: show a fake message on toggle
+      if (button.classList.contains('active')) {
+        button.textContent = button.getAttribute('data-label') + ' [ON]';
+      } else {
+        button.textContent = button.getAttribute('data-label') + ' [OFF]';
+      }
+    });
+  });
+
+  // Initialize all buttons as OFF
+  document.querySelectorAll('.btn').forEach(button => {
+    button.textContent = button.getAttribute('data-label') + ' [OFF]';
+  });
+</script>
+
+</body>
+</html>
