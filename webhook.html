@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SynoHook Sender - Advanced Discord Webhook Sender</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+
+    /* Reset */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #23272a 0%, #1e2228 100%);
+      color: #ddd;
+      font-family: 'Montserrat', sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    h1 {
+      font-weight: 700;
+      font-size: 2.5rem;
+      color: #7289da;
+      text-align: center;
+      margin-bottom: 1rem;
+      user-select: none;
+    }
+    main {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* FORM CARD */
+    form {
+      background: #2c2f36;
+      border-radius: 16px;
+      padding: 2rem;
+      flex: 1 1 480px;
+      box-shadow:
+        0 4px 15px rgba(114, 137, 218, 0.25);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    label {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      color: #b9bbbe;
+      user-select: none;
+    }
+    input[type=text],
+    input[type=url],
+    textarea,
+    input[type=color],
+    select {
+      background: #202225;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6rem 1rem;
+      color: #dcddde;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: box-shadow 0.3s ease;
+      outline-offset: 2px;
+      outline-color: transparent;
+      font-family: 'Montserrat', sans-serif;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    input[type=text]:focus,
+    input[type=url]:focus,
+    textarea:focus,
+    input[type=color]:focus,
+    select:focus {
+      outline-color: #7289da;
+      box-shadow: 0 0 8px #7289da;
+    }
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .flex-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .flex-row > * {
+      flex: 1 1 180px;
+    }
+
+    button {
+      background: #7289da;
+      border: none;
+      padding: 0.85rem 1.5rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: white;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: background-color 0.3s ease;
+      user-select: none;
+      box-shadow: 0 4px 15px rgba(114, 137, 218, 0.7);
+      align-self: start;
+      width: fit-content;
+    }
+    button:hover:not(:disabled) {
+      background: #5b6eae;
+      box-shadow: 0 6px 20px rgba(91, 110, 174, 0.8);
+    }
+    button:disabled {
+      background: #4a4f56;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* PREVIEW CARD */
+    .preview-container {
+      flex: 1 1 480px;
+      background: #2c2f36;
+      border-radius: 16px;
+      padding: 1.5rem 2rem;
+      box-shadow:
+        0 4px 15px rgba(114, 137, 218, 0.25);
+      user-select: none;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .discord-message {
+      background: #36393f;
+      border-radius: 16px;
+      padding: 1rem 1.5rem;
+      color: #dcddde;
+      max-width: 600px;
+      margin: 0 auto 2rem auto;
+      font-size: 14px;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.1),
+        0 2px 6px rgb(0 0 0 / 0.5);
+      user-select: text;
+    }
+    .discord-message .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.6rem;
+    }
+    .discord-message .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      margin-right: 1rem;
+      background-size: cover;
+      background-position: center;
+      box-shadow: 0 0 5px rgb(114 137 218 / 0.5);
+      flex-shrink: 0;
+    }
+    .discord-message .username {
+      font-weight: 700;
+      color: #fff;
+      font-size: 1.1rem;
+    }
+    .discord-message .bot-tag {
+      margin-left: 8px;
+      background: #5865f2;
+      color: white;
+      font-weight: 700;
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 3px;
+      user-select: none;
+    }
+    .discord-message .timestamp {
+      margin-left: 12px;
+      font-size: 0.75rem;
+      color: #72767d;
+      user-select: none;
+    }
+    .discord-message .content {
+      margin: 0.3rem 0 1rem;
+      white-space: pre-wrap;
+      line-height: 1.3;
+      font-size: 1rem;
+      user-select: text;
+    }
+
+    /* Embed styles */
+    .embed {
+      background-color: #2f3136;
+      border-left: 5px solid #7289da;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-top: 1rem;
+      box-shadow:
+        0 1px 5px rgb(0 0 0 / 0.2);
+      position: relative;
+    }
+    .embed .author {
+      display: flex;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .embed .author-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      margin-right: 8px;
+      background-size: cover;
+      background-position: center;
+      box-shadow: 0 0 6px rgb(114 137 218 / 0.7);
+      flex-shrink: 0;
+    }
+    .embed .author-name {
+      font-weight: 600;
+      color: #00aff4;
+      font-size: 0.9rem;
+      cursor: pointer;
+      user-select: none;
+      text-decoration: underline;
+    }
+    .embed .title {
+      font-weight: 700;
+      color: #00aff4;
+      font-size: 1.05rem;
+      margin-bottom: 0.25rem;
+      user-select: text;
+    }
+    .embed .description {
+      font-size: 0.9rem;
+      color: #dcddde;
+      white-space: pre-wrap;
+      line-height: 1.3;
+      user-select: text;
+    }
+    .embed .thumbnail {
+      width: 80px;
+      height: 80px;
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      border-radius: 8px;
+      background-size: cover;
+      background-position: center;
+      box-shadow: 0 0 10px rgb(114 137 218 / 0.7);
+      flex-shrink: 0;
+    }
+    .embed .image {
+      margin-top: 10px;
+      border-radius: 10px;
+      max-width: 100%;
+      box-shadow: 0 0 12px rgb(114 137 218 / 0.8);
+      user-select: none;
+    }
+    .embed .footer {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      font-size: 0.75rem;
+      color: #72767d;
+      user-select: none;
+    }
+    .embed .footer-icon {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      margin-right: 6px;
+      background-size: cover;
+      background-position: center;
+      box-shadow: 0 0 6px rgb(114 137 218 / 0.7);
+      flex-shrink: 0;
+    }
+
+    /* Embed editor styles */
+    .embed-editor {
+      background: #1f2124;
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      margin-top: 1rem;
+      border: 2px solid transparent;
+      transition: border-color 0.3s ease;
+      position: relative;
+    }
+    .embed-editor.active {
+      border-color: #7289da;
+    }
+
+    .embed-editor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      user-select: none;
+    }
+    .embed-editor-header h3 {
+      margin: 0;
+      font-weight: 700;
+      color: #7289da;
+      font-size: 1.2rem;
+    }
+    .embed-editor-header button {
+      background: #f04747;
+      border: none;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      color: white;
+      font-weight: 700;
+      font-size: 20px;
+      cursor: pointer;
+      line-height: 1;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    .embed-editor-header button:hover {
+      background: #d63b3b;
+    }
+
+    .toggle-select {
+      margin: 0.5rem 0 1rem;
+    }
+    .toggle-select select {
+      width: 100%;
+      max-width: 320px;
+    }
+
+    /* Hidden by default, shown if toggled */
+    .toggle-section {
+      display: none;
+      margin-top: 0.8rem;
+    }
+    .toggle-section.active {
+      display: block;
+    }
+
+    .flex-row-small {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+    .flex-row-small > * {
+      flex: 1 1 140px;
+    }
+
+    /* Scrollbar for preview */
+    .preview-container::-webkit-scrollbar {
+      width: 8px;
+    }
+    .preview-container::-webkit-scrollbar-thumb {
+      background: #7289da;
+      border-radius: 3px;
+    }
+
+    /* Scrollbar for form */
+    form::-webkit-scrollbar {
+      width: 8px;
+    }
+    form::-webkit-scrollbar-thumb {
+      background: #7289da;
+      border-radius: 3px;
+    }
+
+    /* Responsive */
+    @media (max-width: 960px) {
+      main {
+        flex-direction: column;
+      }
+      .preview-container,
+      form {
+        flex: 1 1 auto;
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>SynoHook Sender</h1>
+  <main>
+    <form id="webhookForm" autocomplete="off" aria-label="Discord webhook message form">
+      <label for="webhookUrl">Webhook URL <span style="color:#f04747">*</span></label>
+      <input
+        type="url"
+        id="webhookUrl"
+        placeholder="https://discord.com/api/webhooks/..."
+        required
+        aria-required="true"
+      />
+
+      <div class="flex-row">
+        <div>
+          <label for="username">Username (optional)</label>
+          <input type="text" id="username" maxlength="80" placeholder="Webhook username override" />
+        </div>
+        <div>
+          <label for="avatarUrl">Avatar URL (optional)</label>
+          <input type="url" id="avatarUrl" placeholder="URL of avatar image" />
+        </div>
+      </div>
+
+      <label for="content">Message Content (optional)</label>
+      <textarea
+        id="content"
+        placeholder="Text message, supports markdown"
+        rows="3"
+      ></textarea>
+
+      <hr style="border-color: #444; margin: 1.5rem 0;" />
+
+      <section id="embedsContainer" aria-label="Embed editors container">
+        <!-- Embed editors inserted here dynamically -->
+      </section>
+
+      <button type="button" id="addEmbedBtn" title="Add new embed">+ Add Embed</button>
+
+      <button type="submit" id="sendBtn" disabled>Send Webhook</button>
+    </form>
+
+    <section class="preview-container" aria-label="Embed Preview" aria-live="polite">
+      <div class="discord-message" id="previewMessage" role="region" aria-label="Discord message preview">
+        <div class="header">
+          <div
+            class="avatar"
+            id="previewAvatar"
+            style="background-image: url('https://cdn.discordapp.com/embed/avatars/0.png')"
+          ></div>
+          <div>
+            <span class="username" id="previewUsername">Webhook Bot</span>
+            <span class="bot-tag" aria-label="bot tag">BOT</span>
+            <span class="timestamp" id="previewTimestamp"></span>
+          </div>
+        </div>
+        <div class="content" id="previewContent"></div>
+
+        <div id="previewEmbedsWrapper">
+          <!-- Live preview embeds appended here -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script>
+  // Utility function for hex to decimal
+  function hexToDecimal(hex) {
+    return parseInt(hex.replace(/^#/, ''), 16);
+  }
+
+  // Elements
+  const webhookUrlInput = document.getElementById('webhookUrl');
+  const usernameInput = document.getElementById('username');
+  const avatarUrlInput = document.getElementById('avatarUrl');
+  const contentInput = document.getElementById('content');
+  const sendBtn = document.getElementById('sendBtn');
+  const addEmbedBtn = document.getElementById('addEmbedBtn');
+  const embedsContainer = document.getElementById('embedsContainer');
+
+  const previewUsername = document.getElementById('previewUsername');
+  const previewAvatar = document.getElementById('previewAvatar');
+  const previewContent = document.getElementById('previewContent');
+  const previewTimestamp = document.getElementById('previewTimestamp');
+  const previewEmbedsWrapper = document.getElementById('previewEmbedsWrapper');
+
+  // Validate webhook URL and toggle send button
+  function validateWebhookUrl() {
+    const url = webhookUrlInput.value.trim();
+    const valid =
+      url.startsWith('https://discord.com/api/webhooks/') ||
+      url.startsWith('https://discordapp.com/api/webhooks/');
+    sendBtn.disabled = !valid;
+  }
+  webhookUrlInput.addEventListener('input', () => {
+    validateWebhookUrl();
+  });
+  validateWebhookUrl();
+
+  // Track embeds data in an array
+  let embedsData = [];
+
+  // Create a new embed editor block and append to container
+  function createEmbedEditor(index) {
+    // Create container div
+    const embedDiv = document.createElement('div');
+    embedDiv.classList.add('embed-editor');
+    embedDiv.dataset.index = index;
+
+    embedDiv.innerHTML = `
+      <div class="embed-editor-header">
+        <h3>Embed #${index + 1}</h3>
+        <button type="button" title="Remove this embed" aria-label="Remove embed #${index + 1}">&times;</button>
+      </div>
+
+      <label for="embedTitle${index}">Embed Title</label>
+      <input type="text" id="embedTitle${index}" maxlength="256" placeholder="Embed title" />
+
+      <label for="embedDescription${index}">Embed Description</label>
+      <textarea
+        id="embedDescription${index}"
+        maxlength="4096"
+        placeholder="Embed description (markdown supported)"
+        rows="4"
+      ></textarea>
+
+      <label for="embedColor${index}" style="margin-top: 0.8rem; display:flex; align-items:center; gap:8px;">
+        Embed Color
+        <input type="color" id="embedColor${index}" value="#7289da" title="Pick Embed Color" style="flex-shrink:0; width:40px; height:32px; cursor:pointer; border-radius:6px; border:none; padding:0;" />
+        <input type="text" id="embedColorHex${index}" value="#7289da" maxlength="7" placeholder="#7289da" style="flex-grow:1; font-family: monospace; font-size: 1rem; padding:0.25rem 0.5rem; border-radius:6px; border:none; background:#202225; color:#ddd;" />
+      </label>
+
+      <label class="toggle-select" for="embedPartSelect${index}">Toggle Embed Parts</label>
+      <select id="embedPartSelect${index}" aria-label="Select embed part to edit">
+        <option value="">Select part to edit...</option>
+        <option value="author">Author</option>
+        <option value="footer">Footer</option>
+        <option value="thumbnail">Thumbnail</option>
+        <option value="image">Image</option>
+      </select>
+
+      <!-- Author Section -->
+      <section class="toggle-section" id="authorSection${index}">
+        <label for="embedAuthorName${index}" style="margin-top:1rem;">Author Name</label>
+        <input type="text" id="embedAuthorName${index}" maxlength="256" placeholder="Author name" />
+
+        <label for="embedAuthorUrl${index}">Author URL</label>
+        <input type="url" id="embedAuthorUrl${index}" placeholder="https://example.com" />
+
+        <label for="embedAuthorIcon${index}">Author Icon URL</label>
+        <input type="url" id="embedAuthorIcon${index}" placeholder="URL for author icon" />
+      </section>
+
+      <!-- Footer Section -->
+      <section class="toggle-section" id="footerSection${index}">
+        <label for="embedFooterText${index}" style="margin-top:1rem;">Footer Text</label>
+        <input type="text" id="embedFooterText${index}" maxlength="2048" placeholder="Footer text" />
+
+        <label for="embedFooterIcon${index}">Footer Icon URL</label>
+        <input type="url" id="embedFooterIcon${index}" placeholder="URL for footer icon" />
+      </section>
+
+      <!-- Thumbnail Section -->
+      <section class="toggle-section" id="thumbnailSection${index}">
+        <label for="embedThumbnail${index}">Thumbnail URL</label>
+        <input type="url" id="embedThumbnail${index}" placeholder="Embed thumbnail image URL" />
+      </section>
+
+      <!-- Image Section -->
+      <section class="toggle-section" id="imageSection${index}">
+        <label for="embedImage${index}">Image URL</label>
+        <input type="url" id="embedImage${index}" placeholder="Embed main image URL" />
+      </section>
+
+      <label style="margin-top: 1rem;">
+        <input type="checkbox" id="embedTimestamp${index}" />
+        Add Timestamp to Embed
+      </label>
+    `;
+
+    // Add remove embed listener
+    embedDiv.querySelector('button').addEventListener('click', () => {
+      removeEmbed(index);
+    });
+
+    // Add toggle select listener
+    const toggleSelect = embedDiv.querySelector(`#embedPartSelect${index}`);
+    toggleSelect.addEventListener('change', e => {
+      const parts = ['author', 'footer', 'thumbnail', 'image'];
+      parts.forEach(part => {
+        const section = embedDiv.querySelector(`#${part}Section${index}`);
+        if (part === e.target.value) {
+          section.classList.add('active');
+        } else {
+          section.classList.remove('active');
+        }
+      });
+      // Reset select to default after toggling
+      toggleSelect.value = '';
+    });
+
+    // Add input listeners for all inputs inside this embed editor
+    embedDiv.querySelectorAll('input, textarea').forEach(input => {
+      input.addEventListener('input', () => {
+        updateEmbedData(index);
+        updatePreview();
+      });
+    });
+
+    // Add change listener for timestamp checkbox
+    embedDiv.querySelector(`#embedTimestamp${index}`).addEventListener('change', () => {
+      updateEmbedData(index);
+      updatePreview();
+    });
+
+    // Sync color picker and hex input
+    const colorInput = embedDiv.querySelector(`#embedColor${index}`);
+    const hexInput = embedDiv.querySelector(`#embedColorHex${index}`);
+
+    // Color picker -> hex input
+    colorInput.addEventListener('input', () => {
+      hexInput.value = colorInput.value;
+      updateEmbedData(index);
+      updatePreview();
+    });
+
+    // Hex input -> color picker (only valid hex)
+    hexInput.addEventListener('input', () => {
+      const val = hexInput.value.trim();
+      if (/^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})$/.test(val)) {
+        colorInput.value = val;
+        updateEmbedData(index);
+        updatePreview();
+      }
+    });
+
+    embedsContainer.appendChild(embedDiv);
+  }
+
+  // Update embedData from form inputs at index
+  function updateEmbedData(index) {
+    const embedDiv = embedsContainer.querySelector(`.embed-editor[data-index='${index}']`);
+    if (!embedDiv) return;
+
+    const getValue = id => embedDiv.querySelector(`#${id}${index}`)?.value.trim() || '';
+
+    embedsData[index] = {
+      title: getValue('embedTitle'),
+      description: getValue('embedDescription'),
+      color: getValue('embedColor') || '#7289da',
+
+      author: getValue('embedAuthorName')
+        ? {
+            name: getValue('embedAuthorName'),
+            url: getValue('embedAuthorUrl'),
+            icon_url: getValue('embedAuthorIcon'),
+          }
+        : null,
+
+      footer: getValue('embedFooterText')
+        ? {
+            text: getValue('embedFooterText'),
+            icon_url: getValue('embedFooterIcon'),
+          }
+        : null,
+
+      thumbnail: getValue('embedThumbnail')
+        ? {
+            url: getValue('embedThumbnail'),
+          }
+        : null,
+
+      image: getValue('embedImage')
+        ? {
+            url: getValue('embedImage'),
+          }
+        : null,
+
+      timestamp: embedDiv.querySelector(`#embedTimestamp${index}`).checked,
+    };
+  }
+
+  // Remove embed at index
+  function removeEmbed(index) {
+    // Remove from DOM
+    const embedDiv = embedsContainer.querySelector(`.embed-editor[data-index='${index}']`);
+    if (embedDiv) embedsContainer.removeChild(embedDiv);
+
+    // Remove from data
+    embedsData.splice(index, 1);
+
+    // Re-index all remaining embed editors
+    const editors = embedsContainer.querySelectorAll('.embed-editor');
+    editors.forEach((el, i) => {
+      el.dataset.index = i;
+      el.querySelector('.embed-editor-header h3').textContent = `Embed #${i + 1}`;
+
+      // Update all IDs and for attributes inside embed editor for accessibility & unique inputs
+      ['Title', 'Description', 'Color', 'ColorHex', 'PartSelect', 'AuthorName', 'AuthorUrl', 'AuthorIcon', 'FooterText', 'FooterIcon', 'Thumbnail', 'Image', 'Timestamp'].forEach(suffix => {
+        const oldInput = el.querySelector(`#${suffix.toLowerCase()}${index}`);
+        if (!oldInput) return;
+        const newId = suffix.toLowerCase() + i;
+
+        // Update input ID
+        oldInput.id = newId;
+
+        // Update label 'for' attribute if exists
+        const label = el.querySelector(`label[for='${suffix.toLowerCase()}${index}']`);
+        if (label) label.setAttribute('for', newId);
+      });
+
+      // Update remove button aria-label
+      const removeBtn = el.querySelector('button');
+      if (removeBtn) removeBtn.setAttribute('aria-label', `Remove embed #${i + 1}`);
+    });
+
+    // Update preview and data
+    updatePreview();
+  }
+
+  // Add new embed at end
+  function addEmbed() {
+    embedsData.push({
+      title: '',
+      description: '',
+      color: '#7289da',
+      author: null,
+      footer: null,
+      thumbnail: null,
+      image: null,
+      timestamp: false,
+    });
+    createEmbedEditor(embedsData.length - 1);
+    updatePreview();
+  }
+
+  // Update live preview
+  function updatePreview() {
+    previewUsername.textContent = usernameInput.value.trim() || 'Webhook Bot';
+
+    const avatarUrl = avatarUrlInput.value.trim();
+    previewAvatar.style.backgroundImage = avatarUrl
+      ? `url('${avatarUrl}')`
+      : `url('https://cdn.discordapp.com/embed/avatars/0.png')`;
+
+    previewContent.textContent = contentInput.value;
+
+    // Timestamp (current time in hh:mm am/pm)
+    const now = new Date();
+    const timeOptions = { hour: 'numeric', minute: 'numeric' };
+    previewTimestamp.textContent = now.toLocaleTimeString([], timeOptions);
+
+    // Clear old embeds
+    previewEmbedsWrapper.innerHTML = '';
+
+    // Add embeds preview (only if they have content)
+    embedsData.forEach((embed, i) => {
+      if (
+        !embed.title &&
+        !embed.description &&
+        !embed.author?.name &&
+        !embed.footer?.text &&
+        !embed.thumbnail?.url &&
+        !embed.image?.url
+      ) return; // skip empty embed
+
+      const borderColor = embed.color || '#7289da';
+
+      const embedEl = document.createElement('div');
+      embedEl.classList.add('embed');
+      embedEl.style.borderLeftColor = borderColor;
+
+      // Author
+      if (embed.author?.name) {
+        const authorDiv = document.createElement('div');
+        authorDiv.classList.add('author');
+
+        if (embed.author.icon_url) {
+          const icon = document.createElement('div');
+          icon.classList.add('author-icon');
+          icon.style.backgroundImage = `url('${embed.author.icon_url}')`;
+          icon.title = 'Author icon';
+          authorDiv.appendChild(icon);
+        }
+
+        const nameEl = document.createElement('a');
+        nameEl.classList.add('author-name');
+        nameEl.textContent = embed.author.name;
+        if (embed.author.url) {
+          nameEl.href = embed.author.url;
+          nameEl.target = '_blank';
+          nameEl.rel = 'noopener noreferrer';
+        } else {
+          nameEl.href = 'javascript:void(0)';
+          nameEl.style.cursor = 'default';
+          nameEl.style.textDecoration = 'none';
+        }
+        authorDiv.appendChild(nameEl);
+        embedEl.appendChild(authorDiv);
+      }
+
+      if (embed.title) {
+        const titleEl = document.createElement('div');
+        titleEl.classList.add('title');
+        titleEl.textContent = embed.title;
+        embedEl.appendChild(titleEl);
+      }
+
+      if (embed.description) {
+        const descEl = document.createElement('div');
+        descEl.classList.add('description');
+        descEl.textContent = embed.description;
+        embedEl.appendChild(descEl);
+      }
+
+      if (embed.thumbnail?.url) {
+        const thumbDiv = document.createElement('div');
+        thumbDiv.classList.add('thumbnail');
+        thumbDiv.style.backgroundImage = `url('${embed.thumbnail.url}')`;
+        thumbDiv.title = 'Thumbnail';
+        embedEl.appendChild(thumbDiv);
+      }
+
+      if (embed.image?.url) {
+        const imgEl = document.createElement('img');
+        imgEl.classList.add('image');
+        imgEl.src = embed.image.url;
+        imgEl.alt = 'Embed image';
+        embedEl.appendChild(imgEl);
+      }
+
+      if (embed.footer?.text) {
+        const footerDiv = document.createElement('div');
+        footerDiv.classList.add('footer');
+
+        if (embed.footer.icon_url) {
+          const icon = document.createElement('div');
+          icon.classList.add('footer-icon');
+          icon.style.backgroundImage = `url('${embed.footer.icon_url}')`;
+          icon.title = 'Footer icon';
+          footerDiv.appendChild(icon);
+        }
+
+        const text = document.createElement('span');
+        text.textContent = embed.footer.text;
+        footerDiv.appendChild(text);
+        embedEl.appendChild(footerDiv);
+      }
+
+      if (embed.timestamp) {
+        const tsSpan = document.createElement('div');
+        tsSpan.style.fontSize = '0.65rem';
+        tsSpan.style.color = '#72767d';
+        tsSpan.style.marginTop = '6px';
+        tsSpan.style.userSelect = 'none';
+        tsSpan.textContent = new Date().toISOString();
+        embedEl.appendChild(tsSpan);
+      }
+
+      previewEmbedsWrapper.appendChild(embedEl);
+    });
+  }
+
+  // On any main input change update preview
+  [
+    usernameInput,
+    avatarUrlInput,
+    contentInput,
+  ].forEach(el => el.addEventListener('input', updatePreview));
+
+  // Add embed button listener
+  addEmbedBtn.addEventListener('click', () => {
+    addEmbed();
+  });
+
+  // On submit - send webhook
+  document.getElementById('webhookForm').addEventListener('submit', async e => {
+    e.preventDefault();
+
+    // Validate webhook url again
+    validateWebhookUrl();
+    if (sendBtn.disabled) return;
+
+    sendBtn.disabled = true;
+    sendBtn.textContent = 'Sending...';
+
+    const webhookUrl = webhookUrlInput.value.trim();
+    const username = usernameInput.value.trim() || undefined;
+    const avatar_url = avatarUrlInput.value.trim() || undefined;
+    const content = contentInput.value.trim() || undefined;
+
+    // Compose embeds for payload - filter empty embeds
+    const embedsPayload = embedsData
+      .filter(embed => {
+        // At least one field filled
+        return (
+          embed.title ||
+          embed.description ||
+          (embed.author && embed.author.name) ||
+          (embed.footer && embed.footer.text) ||
+          (embed.thumbnail && embed.thumbnail.url) ||
+          (embed.image && embed.image.url)
+        );
+      })
+      .map(embed => {
+        const payloadEmbed = {};
+
+        if (embed.title) payloadEmbed.title = embed.title;
+        if (embed.description) payloadEmbed.description = embed.description;
+        if (embed.color) payloadEmbed.color = hexToDecimal(embed.color);
+
+        if (embed.author && embed.author.name) {
+          payloadEmbed.author = {
+            name: embed.author.name,
+          };
+          if (embed.author.url) payloadEmbed.author.url = embed.author.url;
+          if (embed.author.icon_url) payloadEmbed.author.icon_url = embed.author.icon_url;
+        }
+
+        if (embed.footer && embed.footer.text) {
+          payloadEmbed.footer = {
+            text: embed.footer.text,
+          };
+          if (embed.footer.icon_url) payloadEmbed.footer.icon_url = embed.footer.icon_url;
+        }
+
+        if (embed.thumbnail && embed.thumbnail.url) {
+          payloadEmbed.thumbnail = { url: embed.thumbnail.url };
+        }
+
+        if (embed.image && embed.image.url) {
+          payloadEmbed.image = { url: embed.image.url };
+        }
+
+        if (embed.timestamp) {
+          payloadEmbed.timestamp = new Date().toISOString();
+        }
+
+        return payloadEmbed;
+      });
+
+    // Build payload object
+    const payload = {};
+    if (username) payload.username = username;
+    if (avatar_url) payload.avatar_url = avatar_url;
+    if (content) payload.content = content;
+    if (embedsPayload.length > 0) payload.embeds = embedsPayload;
+
+    try {
+      const res = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        alert('Webhook sent successfully! 🎉');
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        alert('Failed to send webhook. ' + (errorData.message || 'Unknown error.'));
+      }
+    } catch (err) {
+      alert('Error sending webhook: ' + err.message);
+    }
+
+    sendBtn.disabled = false;
+    sendBtn.textContent = 'Send Webhook';
+  });
+
+  // Initialize with one embed
+  addEmbed();
+  updatePreview();
+</script>
+
+</body>
+</html>
