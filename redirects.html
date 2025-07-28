@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Discord Redirector</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #2f3136;
+    color: #ddd;
+    margin: 0; padding: 20px;
+  }
+  a {
+    color: #7289da;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  .container {
+    max-width: 600px;
+    margin: auto;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  li {
+    background: #202225;
+    margin: 0.5rem 0;
+    padding: 0.8rem 1rem;
+    border-radius: 5px;
+  }
+  .code {
+    font-weight: bold;
+    color: #99aab5;
+  }
+</style>
+</head>
+<body>
+<div class="container" id="app">
+  <!-- Content will be rendered by JS -->
+</div>
+
+<script>
+  // Your URL mappings here (add/change as you like)
+  const links = {
+    "abc123": "https://discord.gg/yourserver1",
+    "funlink": "https://discord.gg/yourserver2",
+    "coolserver": "https://discord.gg/otherserver",
+    "google": "https://google.com"
+  };
+
+  const app = document.getElementById('app');
+  const path = window.location.pathname.replace(/^\/+|\/+$/g, '');
+
+  if (path === '' || path === 'home') {
+    // Show homepage with all links
+    app.innerHTML = `
+      <h1>All Redirect Links</h1>
+      <ul>
+        ${Object.entries(links).map(([code, url]) =>
+          `<li><span class="code">${code}</span> → <a href="${url}" target="_blank" rel="noopener">${url}</a></li>`
+        ).join('')}
+      </ul>
+      <p style="text-align:center; margin-top:2rem; font-size:0.9rem; color:#555;">To add or change links, edit the code and redeploy.</p>
+    `;
+  } else if (links[path]) {
+    // Redirect to the mapped URL
+    window.location.replace(links[path]);
+    // Optionally show a message while redirecting
+    app.innerHTML = `<p>Redirecting to <a href="${links[path]}" target="_blank">${links[path]}</a>...</p>`;
+  } else {
+    // 404 page
+    app.innerHTML = `
+      <h1>404 Not Found</h1>
+      <p>No redirect found for <code>${path}</code></p>
+      <p><a href="/home">Go back to Home</a></p>
+    `;
+  }
+</script>
+</body>
+</html>
