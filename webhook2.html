@@ -1,495 +1,187 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Premium Webhook Sender — Single File</title>
-  <style>
-    :root{
-      --bg:#0f1113; /* deep discord-ish */
-      --panel:#17181a;
-      --muted:#b9bbbe;
-      --accent:#3b82f6; /* blue accent */
-      --accent-2:#2b6ce4;
-      --success:#22c55e;
-      --danger:#ef4444;
-      --glass: rgba(255,255,255,0.03);
-      --radius:12px;
-      --mono: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:var(--mono);
-      background:linear-gradient(180deg,#070708 0%, #0b0c0d 60%);
-      color:#e6edf3;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      padding:28px;
-    }
-    .wrap{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:22px}
-    .panel{background:linear-gradient(180deg,var(--panel),#121214);border-radius:var(--radius);padding:18px;box-shadow:0 6px 24px rgba(2,6,23,0.6);}
-    header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-    .logo{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:700;color:white}
-    h1{font-size:18px;margin:0}
-    .muted{color:var(--muted);font-size:13px}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Webhook Sender</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
-    /* form layout */
-    .form-row{display:flex;gap:8px;margin-bottom:10px}
-    .input, textarea, select{background:var(--glass);border:1px solid rgba(255,255,255,0.04);color:inherit;padding:10px;border-radius:10px;outline:none;font-size:14px;width:100%}
-    textarea{min-height:80px;resize:vertical}
-    label{font-size:12px;color:var(--muted);margin-bottom:6px;display:block}
-    .controls{display:flex;gap:8px;align-items:center}
-    .btn{cursor:pointer;padding:8px 12px;border-radius:10px;border:0;background:var(--accent);color:white;font-weight:600}
-    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
-    .btn.warn{background:var(--danger)}
-    .small{padding:6px 8px;font-size:13px}
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+  body {
+    background: linear-gradient(135deg,#0f0f0f,#1b1b1b);
+    min-height: 100vh; display: flex; justify-content: center; align-items: center;
+    padding: 20px; color: #fff;
+  }
+  .container {
+    width: 100%; max-width: 700px;
+    background: rgba(255,255,255,0.05); backdrop-filter: blur(12px);
+    border-radius: 18px; padding: 25px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+    animation: fadeInUp 0.6s ease;
+  }
+  h1 {
+    text-align: center; margin-bottom: 20px; font-weight: 700;
+    font-size: 1.8rem; color: #00e1ff; text-shadow: 0 0 10px rgba(0,225,255,0.5);
+  }
+  label { display: block; margin: 12px 0 6px; font-weight: 600; }
+  input, textarea {
+    width: 100%; padding: 12px; border-radius: 10px; border: none; outline: none;
+    background: rgba(255,255,255,0.1); color: #fff; font-size: 0.95rem;
+    transition: 0.3s; box-shadow: inset 0 0 0 rgba(0,0,0,0);
+  }
+  input:focus, textarea:focus {
+    background: rgba(255,255,255,0.15);
+    box-shadow: 0 0 8px #00e1ff80;
+  }
+  textarea { resize: vertical; min-height: 80px; }
+  input[type="color"] { padding: 0; height: 45px; cursor: pointer; }
+  .flex { display: flex; gap: 10px; }
+  button {
+    width: 100%; margin-top: 15px; padding: 14px;
+    border: none; border-radius: 12px;
+    background: linear-gradient(135deg,#00e1ff,#0077ff);
+    color: #fff; font-weight: 700; cursor: pointer; font-size: 1rem;
+    transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(0,225,255,0.4);
+  }
+  button:hover { transform: translateY(-3px) scale(1.02); }
+  .preview {
+    margin-top: 25px; padding: 15px; border-radius: 14px;
+    background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+    animation: fadeIn 0.4s ease;
+  }
+  .alert {
+    position: fixed; top: 20px; right: 20px;
+    background: #111; padding: 15px 20px; border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+    opacity: 0; transform: translateY(-20px);
+    transition: all 0.4s ease; z-index: 1000;
+  }
+  .alert.show { opacity: 1; transform: translateY(0); }
+  .alert.success { border-left: 5px solid #0f0; color: #0f0; }
+  .alert.error { border-left: 5px solid #f33; color: #f55; }
 
-    /* embeds list */
-    .embeds{display:flex;flex-direction:column;gap:12px}
-    .embed-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.02)}
-    .embed-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
-    .embed-preview{border-radius:10px;padding:10px;background:#0f1113;border:1px solid rgba(255,255,255,0.02);margin-top:10px}
-    .field-row{display:flex;gap:8px}
-    .field{background:rgba(255,255,255,0.02);padding:8px;border-radius:8px;border:1px dashed rgba(255,255,255,0.02);font-size:13px}
-
-    /* right column */
-    .preview{position:sticky;top:28px}
-    .live-preview{background:linear-gradient(180deg,#0c0d0e,#0b0b0c);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
-    .webhook-info{display:flex;gap:8px;align-items:center}
-    .status{font-weight:700}
-    .actions{display:flex;gap:8px;margin-top:10px}
-
-    footer{margin-top:16px;color:var(--muted);font-size:13px}
-
-    /* responsive */
-    @media (max-width:980px){
-      .wrap{grid-template-columns:1fr;}
-      .preview{position:relative}
-    }
-  </style>
+  @keyframes fadeInUp { from {opacity:0; transform:translateY(30px);} to {opacity:1; transform:translateY(0);} }
+  @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <main class="panel">
-      <header>
-        <div class="logo">PW</div>
-        <div>
-          <h1>Premium Webhook Sender</h1>
-          <div class="muted">Dark Discord-style UI — multiple embeds, buttons, and full payload control</div>
-        </div>
-      </header>
 
-      <section>
-        <label>Webhook URL</label>
-        <div class="form-row">
-          <input id="webhook" class="input" placeholder="https://discord.com/api/webhooks/..." />
-          <button id="validateBtn" class="btn small">Validate</button>
-          <button id="clearBtn" class="btn ghost small">Clear</button>
-        </div>
+<div class="container">
+  <h1>⚡ Webhook Sender</h1>
 
-        <label>Content (plain text message)</label>
-        <textarea id="content" placeholder="Send a plain message alongside embeds (optional)"></textarea>
+  <label>Webhook URL *</label>
+  <input type="url" id="webhookUrl" placeholder="https://discord.com/api/webhooks/...">
 
-        <div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0">
-          <div class="muted">Embeds</div>
-          <div class="controls">
-            <button id="addEmbed" class="btn small">+ Add Embed</button>
-            <button id="exportJSON" class="btn ghost small">Export JSON</button>
-          </div>
-        </div>
-
-        <div class="embeds" id="embeds"></div>
-
-        <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
-          <button id="sendBtn" class="btn">Send Webhook</button>
-          <button id="previewBtn" class="btn ghost">Show Raw Payload</button>
-          <div id="sendStatus" class="muted" style="margin-left:8px"></div>
-        </div>
-
-        <footer>
-          <div>Pro tip: For advanced usage, you can craft button-link objects (type: 2 style: 5) which open external links. Use image/thumbnail URLs for rich visuals. This tool is a client-side convenience; if Discord blocks CORS on your browser, use a small server proxy or the built-in cURL export.</div>
-        </footer>
-      </section>
-    </main>
-
-    <aside class="panel preview">
-      <div class="webhook-info">
-        <div style="flex:1">
-          <label>Live Preview</label>
-          <div class="muted">What will be sent to Discord</div>
-        </div>
-        <div style="text-align:right">
-          <div class="muted">Status</div>
-          <div id="liveStatus" class="status muted">Idle</div>
-        </div>
-      </div>
-
-      <div class="live-preview" id="livePreview"></div>
-
-      <div style="margin-top:12px">
-        <label>Quick Actions</label>
-        <div class="actions">
-          <button id="copyPayload" class="btn small">Copy Payload</button>
-          <button id="downloadPayload" class="btn ghost small">Download JSON</button>
-          <button id="clearAll" class="btn ghost small">Reset</button>
-        </div>
-      </div>
-
-      <div style="margin-top:12px">
-        <label>Send Result</label>
-        <div id="resultBox" class="muted">No sends yet</div>
-      </div>
-    </aside>
+  <div class="flex">
+    <div style="flex:1">
+      <label>Webhook Username</label>
+      <input type="text" id="username" placeholder="Optional">
+    </div>
+    <div style="flex:1">
+      <label>Webhook Avatar URL</label>
+      <input type="url" id="avatar" placeholder="Optional">
+    </div>
   </div>
 
-  <script>
-    // Single-file advanced webhook sender
-    (function(){
-      // state
-      const MAX_EMBEDS = 10;
-      const embedsEl = document.getElementById('embeds');
-      const livePreview = document.getElementById('livePreview');
-      const webhookInput = document.getElementById('webhook');
-      const contentInput = document.getElementById('content');
-      const sendBtn = document.getElementById('sendBtn');
-      const addEmbedBtn = document.getElementById('addEmbed');
-      const liveStatus = document.getElementById('liveStatus');
-      const sendStatus = document.getElementById('sendStatus');
-      const resultBox = document.getElementById('resultBox');
+  <label>Message Content</label>
+  <textarea id="content" placeholder="Your message..."></textarea>
 
-      let state = {
-        embeds: []
-      };
+  <label>Embed Title</label>
+  <input type="text" id="embedTitle" placeholder="Title">
 
-      function makeEmptyEmbed(){
-        return {
-          title:'',
-          description:'',
-          color:0x2f3136,
-          author:{name:'',url:'',icon_url:''},
-          footer:{text:'',icon_url:''},
-          image:'',
-          thumbnail:'',
-          fields:[],
-          timestamp:false,
-          components:[] // buttons
-        }
-      }
+  <label>Embed Description</label>
+  <textarea id="embedDesc" placeholder="Description"></textarea>
 
-      // helpers
-      function toHex(num){
-        if(typeof num === 'string' && num.startsWith('#')) return num;
-        return '#' + Number(num).toString(16).padStart(6,'0');
-      }
+  <div class="flex">
+    <div style="flex:1">
+      <label>Embed Color</label>
+      <input type="color" id="embedColor" value="#F9F9F9">
+    </div>
+    <div style="flex:1">
+      <label>HEX Code</label>
+      <input type="text" id="embedHex" value="#F9F9F9">
+    </div>
+  </div>
 
-      function render(){
-        embedsEl.innerHTML='';
-        state.embeds.forEach((e,i)=>{
-          const card = document.createElement('div');card.className='embed-card';
-          card.innerHTML = `
-            <div class="embed-head">
-              <div style="display:flex;gap:10px;align-items:center">
-                <strong>Embed ${i+1}</strong>
-                <div class="muted">${e.title?truncate(e.title,36):'No title'}</div>
-              </div>
-              <div style="display:flex;gap:8px">
-                <button data-action="move-up" data-i="${i}" class="btn small">▲</button>
-                <button data-action="move-down" data-i="${i}" class="btn small">▼</button>
-                <button data-action="toggle-preview" data-i="${i}" class="btn ghost small">Preview</button>
-                <button data-action="remove" data-i="${i}" class="btn warn small">Delete</button>
-              </div>
-            </div>
-            <div style="margin-top:10px;display:grid;grid-template-columns:1fr 160px;gap:10px">
-              <div>
-                <label>Title</label>
-                <input data-field="title" data-i="${i}" class="input" value="${escapeHTML(e.title)}" />
-                <label style="margin-top:8px">Description</label>
-                <textarea data-field="description" data-i="${i}" class="input">${escapeHTML(e.description)}</textarea>
-                <div class="field-row" style="margin-top:8px">
-                  <div style="flex:1">
-                    <label>Color (hex)</label>
-                    <input data-field="color" data-i="${i}" class="input" value="${toHex(e.color)}" />
-                  </div>
-                  <div style="width:120px">
-                    <label>Timestamp</label>
-                    <select data-field="timestamp" data-i="${i}" class="input">
-                      <option value="false" ${!e.timestamp? 'selected':''}>None</option>
-                      <option value="now" ${e.timestamp==='now'? 'selected':''}>Now</option>
-                    </select>
-                  </div>
-                </div>
+  <label>Embed Thumbnail URL</label>
+  <input type="url" id="embedThumb">
 
-                <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
-                  <button data-action="add-field" data-i="${i}" class="btn small">+ Field</button>
-                  <button data-action="add-button" data-i="${i}" class="btn small">+ Link Button</button>
-                </div>
+  <label>Embed Image URL</label>
+  <input type="url" id="embedImage">
 
-                <div data-fields="${i}" style="margin-top:8px"></div>
+  <label>Embed Footer</label>
+  <input type="text" id="embedFooter" value="posted at">
 
-              </div>
-              <div>
-                <label>Author name</label>
-                <input data-field="author.name" data-i="${i}" class="input" value="${escapeHTML(e.author.name||'')}" />
-                <label style="margin-top:8px">Author icon URL</label>
-                <input data-field="author.icon_url" data-i="${i}" class="input" value="${escapeHTML(e.author.icon_url||'')}" />
-                <label style="margin-top:8px">Author URL</label>
-                <input data-field="author.url" data-i="${i}" class="input" value="${escapeHTML(e.author.url||'')}" />
+  <div style="margin-top:10px;">
+    <input type="checkbox" id="embedTimestamp" checked>
+    <label for="embedTimestamp">Include timestamp</label>
+  </div>
 
-                <label style="margin-top:8px">Thumbnail URL</label>
-                <input data-field="thumbnail" data-i="${i}" class="input" value="${escapeHTML(e.thumbnail||'')}" />
-                <label style="margin-top:8px">Image URL</label>
-                <input data-field="image" data-i="${i}" class="input" value="${escapeHTML(e.image||'')}" />
+  <button onclick="sendWebhook()">🚀 Send Webhook</button>
 
-                <label style="margin-top:8px">Footer text</label>
-                <input data-field="footer.text" data-i="${i}" class="input" value="${escapeHTML(e.footer.text||'')}" />
-                <label style="margin-top:8px">Footer icon URL</label>
-                <input data-field="footer.icon_url" data-i="${i}" class="input" value="${escapeHTML(e.footer.icon_url||'')}" />
+  <div class="preview" id="preview">
+    <p><b>Preview:</b></p>
+    <p id="pContent">🟢 Website</p>
+  </div>
+</div>
 
-              </div>
-            </div>
-            <div class="embed-preview" data-preview="${i}"></div>
-          `;
+<div class="alert" id="alertBox"></div>
 
-          embedsEl.appendChild(card);
+<script>
+const alertBox = document.getElementById('alertBox');
+function showAlert(msg, type="success") {
+  alertBox.textContent = msg;
+  alertBox.className = "alert show " + type;
+  setTimeout(()=> alertBox.className = "alert " + type, 3000);
+}
 
-          // render fields & buttons container
-          const fieldsContainer = card.querySelector(`[data-fields="${i}"]`);
-          fieldsContainer.innerHTML = '';
-          e.fields.forEach((fidx,f)=>{
-            // not used
-          });
-          e.fields.forEach((field,fi)=>{
-            const f = document.createElement('div');f.className='field';
-            f.style.marginTop='6px';
-            f.innerHTML = `
-              <div style="display:flex;justify-content:space-between;align-items:center">
-                <strong>${escapeHTML(field.name||'Field')}</strong>
-                <div style="display:flex;gap:6px">
-                  <button data-action="remove-field" data-i="${i}" data-fi="${fi}" class="btn ghost small">Remove</button>
-                </div>
-              </div>
-              <div style="margin-top:6px">
-                <input data-field="fields.${fi}.name" data-i="${i}" class="input" value="${escapeHTML(field.name)}" placeholder="Name" />
-                <input data-field="fields.${fi}.value" data-i="${i}" class="input" style="margin-top:6px" value="${escapeHTML(field.value)}" placeholder="Value" />
-                <label style="margin-top:6px">Inline</label>
-                <select data-field="fields.${fi}.inline" data-i="${i}" class="input">
-                  <option value="false" ${!field.inline? 'selected':''}>False</option>
-                  <option value="true" ${field.inline? 'selected':''}>True</option>
-                </select>
-              </div>
-            `;
-            fieldsContainer.appendChild(f);
-          });
+// sync hex <-> picker
+document.getElementById("embedColor").addEventListener("input", e=>{
+  document.getElementById("embedHex").value = e.target.value;
+});
+document.getElementById("embedHex").addEventListener("input", e=>{
+  const val = e.target.value;
+  if(/^#([0-9A-F]{3}){1,2}$/i.test(val)) {
+    document.getElementById("embedColor").value = val;
+  }
+});
 
-          // buttons
-          if(e.components && e.components.length){
-            e.components.forEach((row,ri)=>{
-              row.forEach((btn,bi)=>{
-                const b = document.createElement('div');b.className='field';b.style.marginTop='6px';
-                b.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><strong>Button</strong><button data-action=\"remove-button\" data-i=\"${i}\" data-bi=\"${bi}\" class=\"btn ghost small\">Remove</button></div><div style=\"margin-top:6px\"><input data-field=\"components.${bi}.label\" data-i=\"${i}\" class=\"input\" value=\"${escapeHTML(btn.label||'')}\" placeholder=\"Label\"/><input data-field=\"components.${bi}.url\" data-i=\"${i}\" class=\"input\" style=\"margin-top:6px\" value=\"${escapeHTML(btn.url||'')}\" placeholder=\"https://\"/></div>`;
-                fieldsContainer.appendChild(b);
-              })
-            })
-          }
+async function sendWebhook(){
+  const url = document.getElementById("webhookUrl").value.trim();
+  if(!url) return showAlert("Webhook URL required!","error");
 
-        });
+  const username = document.getElementById("username").value.trim();
+  const avatar = document.getElementById("avatar").value.trim();
+  const content = document.getElementById("content").value.trim();
 
-        attachListeners();
-        renderLivePreview();
-      }
+  const embed = {
+    title: document.getElementById("embedTitle").value.trim() || "🟢 Website",
+    description: document.getElementById("embedDesc").value.trim() || "",
+    color: parseInt(document.getElementById("embedHex").value.replace("#",""),16),
+    footer: { text: document.getElementById("embedFooter").value || "posted at" },
+    thumbnail: { url: document.getElementById("embedThumb").value || "https://cdn.discordapp.com/attachments/1396676242589225182/1421146024059211887/file_000000006784623098578060a14cb515.png" },
+  };
+  const img = document.getElementById("embedImage").value.trim();
+  if(img) embed.image = { url: img };
+  if(document.getElementById("embedTimestamp").checked) embed.timestamp = new Date();
 
-      function attachListeners(){
-        // input bindings
-        document.querySelectorAll('[data-field]').forEach(el=>{
-          el.oninput = e=>{
-            const path = el.getAttribute('data-field');
-            const idx = Number(el.getAttribute('data-i'));
-            setField(state.embeds[idx], path, el.value);
-            renderLivePreview();
-          }
-        });
+  const payload = { content };
+  if(username) payload.username = username;
+  if(avatar) payload.avatar_url = avatar;
+  payload.embeds = [embed];
 
-        // buttons
-        document.querySelectorAll('[data-action]').forEach(btn=>{
-          btn.onclick = e=>{
-            const action = btn.getAttribute('data-action');
-            const idx = Number(btn.getAttribute('data-i'));
-            if(action==='remove'){
-              state.embeds.splice(idx,1);
-              render();
-            }else if(action==='move-up'){
-              if(idx>0){const a=state.embeds.splice(idx,1)[0];state.embeds.splice(idx-1,0,a);render();}
-            }else if(action==='move-down'){
-              if(idx<state.embeds.length-1){const a=state.embeds.splice(idx,1)[0];state.embeds.splice(idx+1,0,a);render();}
-            }else if(action==='add-field'){
-              state.embeds[idx].fields.push({name:'New field',value:'value',inline:false});render();
-            }else if(action==='remove-field'){
-              const fi = Number(btn.getAttribute('data-fi'));state.embeds[idx].fields.splice(fi,1);render();
-            }else if(action==='add-button'){
-              // ensure components row exists
-              state.embeds[idx].components = state.embeds[idx].components || [];
-              // make first row if not
-              if(!state.embeds[idx].components.length) state.embeds[idx].components.push([]);
-              state.embeds[idx].components[0].push({type:2,style:5,label:'Visit',url:''});render();
-            }else if(action==='remove-button'){
-              const bi = Number(btn.getAttribute('data-bi'));
-              state.embeds[idx].components[0].splice(bi,1);render();
-            }else if(action==='toggle-preview'){
-              const preview = document.querySelector(`[data-preview="${idx}"]`);
-              preview.innerHTML = renderEmbedHTML(state.embeds[idx]);
-            }
-          }
-        })
-      }
+  try{
+    const res = await fetch(url,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify(payload)
+    });
+    if(res.ok) showAlert("Webhook sent!","success");
+    else showAlert("Failed to send webhook","error");
+  }catch(e){ showAlert("Error: "+e.message,"error"); }
+}
+</script>
 
-      function setField(obj,path,value){
-        const parts = path.split('.');
-        let cur = obj;
-        for(let i=0;i<parts.length-1;i++){
-          const p = parts[i];
-          if(p.startsWith('fields')){
-            // handled outside
-          }
-          if(!cur[p]) cur[p] = {};
-          cur = cur[p];
-        }
-        const last = parts[parts.length-1];
-        // cast booleans
-        if(value==='true') value = true;
-        if(value==='false') value = false;
-        cur[last] = value;
-      }
-
-      function renderEmbedHTML(e){
-        const color = (typeof e.color === 'string' && e.color.startsWith('#'))? e.color : toHex(e.color||0x2f3136);
-        const ts = e.timestamp ? `<div style="font-size:12px;color:var(--muted);margin-top:6px">${new Date().toLocaleString()}</div>`:'';
-        let fieldsHTML = '';
-        if(e.fields && e.fields.length){
-          fieldsHTML = '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">'+e.fields.map(f=>`<div style="background:rgba(255,255,255,0.02);padding:8px;border-radius:8px;min-width:120px"><strong>${escapeHTML(f.name)}</strong><div style="font-size:13px;margin-top:6px">${escapeHTML(f.value)}</div></div>`).join('')+'</div>';
-        }
-        let thumb = e.thumbnail? `<img src="${escapeAttr(e.thumbnail)}" style="width:64px;height:64px;object-fit:cover;border-radius:8px;margin-left:8px"/>`:'';
-        let image = e.image? `<div style="margin-top:8px"><img src="${escapeAttr(e.image)}" style="width:100%;border-radius:8px;object-fit:cover"/></div>`:'';
-        let author = e.author && e.author.name ? `<div style="display:flex;align-items:center;gap:8px"><div style="font-weight:700">${escapeHTML(e.author.name)}</div></div>`:'';
-        let footer = e.footer && e.footer.text ? `<div style="font-size:12px;color:var(--muted);margin-top:8px">${escapeHTML(e.footer.text)}</div>`:'';
-        let buttonsHTML = '';
-        if(e.components && e.components.length){
-          buttonsHTML = '<div style="margin-top:8px;display:flex;gap:8px">';
-          e.components.forEach(row=>{row.forEach(btn=>{buttonsHTML += `<a href="${escapeAttr(btn.url)}" target="_blank" style="text-decoration:none"><div style="padding:8px 12px;border-radius:8px;background:linear-gradient(180deg,var(--accent),var(--accent-2));font-weight:700;color:white">${escapeHTML(btn.label)}</div></a>`})});
-          buttonsHTML += '</div>';
-        }
-
-        return `
-          <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
-            <div style="flex:1">
-              ${author}
-              <div style="margin-top:6px;font-weight:700;color:${color}">${escapeHTML(e.title||'')}</div>
-              <div style="margin-top:6px;color:var(--muted)">${escapeHTML(e.description||'')}</div>
-              ${fieldsHTML}
-              ${image}
-              ${buttonsHTML}
-              ${footer}
-              ${ts}
-            </div>
-            <div>${thumb}</div>
-          </div>
-        `;
-      }
-
-      function renderLivePreview(){
-        livePreview.innerHTML = '';
-        const content = contentInput.value;
-        if(content) livePreview.appendChild(makeEl('div', {innerHTML: '<div style="margin-bottom:8px">'+escapeHTML(content)+'</div>'}));
-        state.embeds.forEach(e=>{
-          const box = document.createElement('div');box.style.marginBottom='12px';box.innerHTML = renderEmbedHTML(e);
-          livePreview.appendChild(box);
-        })
-      }
-
-      function makeEl(tag, attrs){const el=document.createElement(tag);for(let k in attrs)el[k]=attrs[k];return el}
-
-      function escapeHTML(s){ if(s==null) return ''; return String(s).replace(/[&<>\\"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]); }
-      function escapeAttr(s){ if(!s) return ''; return String(s).replace(/"/g,'\\"'); }
-      function truncate(s,n){ if(!s) return ''; return s.length>n? s.slice(0,n-1)+'…':s }
-
-      // operations
-      document.getElementById('addEmbed').onclick = ()=>{
-        if(state.embeds.length>=MAX_EMBEDS) return alert('Max '+MAX_EMBEDS+' embeds');
-        state.embeds.push(makeEmptyEmbed());render();
-      }
-
-      document.getElementById('clearBtn').onclick = ()=>{webhookInput.value='';}
-      document.getElementById('validateBtn').onclick = ()=>{ alert(webhookInput.value? 'Webhook entered': 'No webhook URL'); }
-
-      // send
-      document.getElementById('sendBtn').onclick = async ()=>{
-        const url = webhookInput.value.trim();
-        if(!url){ alert('Add a webhook URL'); return; }
-        const payload = buildPayload();
-        try{
-          liveStatus.textContent = 'Sending...';
-          const res = await fetch(url, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-          if(res.ok){
-            resultBox.textContent = 'Sent successfully — HTTP '+res.status; sendStatus.textContent = 'Last sent: '+new Date().toLocaleTimeString();
-          } else {
-            const txt = await res.text();
-            resultBox.textContent = 'Failed — HTTP '+res.status + ' ' + txt.slice(0,300);
-          }
-        }catch(err){
-          resultBox.textContent = 'Network error: ' + err.message + '\nIf CORS blocked the request, use the Download JSON option and send via server or curl.';
-        }finally{ liveStatus.textContent='Idle'; }
-      }
-
-      function buildPayload(){
-        const content = contentInput.value || undefined;
-        const p = {};
-        if(content) p.content = content;
-        if(state.embeds.length) p.embeds = state.embeds.map(e=>{
-          return {
-            title: e.title || undefined,
-            description: e.description || undefined,
-            color: (typeof e.color === 'string' && e.color.startsWith('#'))? parseInt(e.color.replace('#',''),16) : Number(e.color||0x2f3136),
-            author: e.author && e.author.name? {name:e.author.name, url:e.author.url||undefined, icon_url:e.author.icon_url||undefined}: undefined,
-            footer: e.footer && e.footer.text? {text:e.footer.text, icon_url:e.footer.icon_url||undefined}: undefined,
-            thumbnail: e.thumbnail || undefined,
-            image: e.image || undefined,
-            fields: e.fields && e.fields.length? e.fields.map(f=>({ name: f.name, value: f.value, inline: !!f.inline })): undefined,
-            timestamp: e.timestamp === 'now'? new Date().toISOString(): undefined,
-            components: (e.components && e.components.length)? (function(){
-              // transform to discord components
-              return e.components.map(row=>({type:1,components: row.map(b=>({type:2,style:5,label:b.label,url:b.url}))}));
-            })(): undefined
-          }
-        });
-        return p;
-      }
-
-      // export JSON
-      document.getElementById('exportJSON').onclick = ()=>{
-        const payload = buildPayload();
-        const blob = new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');a.href=url;a.download='webhook-payload.json';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
-      }
-
-      document.getElementById('copyPayload').onclick = async ()=>{
-        const p = buildPayload();
-        try{ await navigator.clipboard.writeText(JSON.stringify(p,null,2)); alert('Payload copied'); }catch(e){ alert('Copy failed'); }
-      }
-
-      document.getElementById('downloadPayload').onclick = ()=>{ document.getElementById('exportJSON').click(); }
-      document.getElementById('clearAll').onclick = ()=>{ if(confirm('Reset all?')){ state.embeds = []; contentInput.value=''; webhookInput.value=''; render(); resultBox.textContent='Reset'; }}
-
-      document.getElementById('previewBtn').onclick = ()=>{ const p = buildPayload(); alert(JSON.stringify(p,null,2).slice(0,20000)); }
-
-      // initial
-      state.embeds = [makeEmptyEmbed()]; render();
-
-      // small utility: live update content
-      contentInput.oninput = renderLivePreview;
-
-    })();
-  </script>
 </body>
 </html>
