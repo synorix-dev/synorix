@@ -1,0 +1,152 @@
+**AI Agency Website**
+
+**HTML**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agency | Discord Code Maker</title>
+    <style>
+        /* Global Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+        }
+        /* Header Styles */
+        header {
+            background-color: #0ea5a4;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+        }
+        header h1 {
+            margin-bottom: 0;
+        }
+        /* Main Styles */
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .input-group {
+            margin-bottom: 2rem;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .button {
+            background-color: #0ea5a4;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #0c9644;
+        }
+        /* Footer Styles */
+        footer {
+            background-color: #0ea5a4;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+            clear: both;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>AI Agency | Discord Code Maker</h1>
+    </header>
+    <main>
+        <div class="container">
+            <h2>Discord Code Maker</h2>
+            <form>
+                <div class="input-group">
+                    <label for="bot-name">Bot Name:</label>
+                    <input type="text" id="bot-name" name="bot-name" placeholder="Enter bot name">
+                </div>
+                <div class="input-group">
+                    <label for="prefix">Prefix:</label>
+                    <input type="text" id="prefix" name="prefix" placeholder="Enter prefix">
+                </div>
+                <div class="input-group">
+                    <label for="commands">Commands:</label>
+                    <textarea id="commands" name="commands" placeholder="Enter commands"></textarea>
+                </div>
+                <button class="button" onclick="generateCode()">Generate Code</button>
+            </form>
+            <div id="code-output" style="margin-top: 2rem;"></div>
+        </div>
+    </main>
+    <footer>
+        <p>Powered by Groq AI (Llama-3.1-8b-instant)</p>
+    </footer>
+
+    <script>
+        // Groq AI API Key
+        const apiKey = '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';
+
+        // Function to generate code
+        function generateCode() {
+            const botName = document.getElementById('bot-name').value;
+            const prefix = document.getElementById('prefix').value;
+            const commands = document.getElementById('commands').value;
+
+            // Create API request to Groq AI
+            const url = `https://api.groq.ai/v1/instant?lang=javascript&model=llama-3.1-8b-instant&prompt=Create a Discord bot in JavaScript with the following settings:\n\n${botName}\n\n${prefix}\n\n${commands}`;
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`,
+                }
+            })
+            .then(response => response.text())
+            .then(data => {
+                // Output generated code
+                const codeOutput = document.getElementById('code-output');
+                codeOutput.innerHTML = data;
+            })
+            .catch(error => console.error(error));
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/groq-ai@1.0.0/dist/groq-ai.min.js"></script>
+</body>
+</html>
+```
+
+**Note:**
+
+* Replace `YOUR_GROQ_AI_API_KEY` with your actual Groq AI API key.
+* Make sure to include the Groq AI JavaScript library in your HTML file.
+* This code uses the Llama-3.1-8b-instant model, which is a powerful language model for generating code. However, please be aware that this model may not always produce perfect or even working code.
+* This code is for educational purposes only and should not be used in production without proper testing and validation.
+* The code generation process may take some time, depending on the complexity of the prompt and the model's processing power.
