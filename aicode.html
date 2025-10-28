@@ -1,152 +1,280 @@
-**AI Agency Website**
-
-**HTML**
-
-```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Agency | Discord Code Maker</title>
-    <style>
-        /* Global Styles */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f7f7f7;
-            color: #333;
-        }
-        /* Header Styles */
-        header {
-            background-color: #0ea5a4;
-            color: #fff;
-            padding: 1rem;
-            text-align: center;
-        }
-        header h1 {
-            margin-bottom: 0;
-        }
-        /* Main Styles */
-        main {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 2rem;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .input-group {
-            margin-bottom: 2rem;
-        }
-        .input-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-        .input-group input {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .button {
-            background-color: #0ea5a4;
-            color: #fff;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .button:hover {
-            background-color: #0c9644;
-        }
-        /* Footer Styles */
-        footer {
-            background-color: #0ea5a4;
-            color: #fff;
-            padding: 1rem;
-            text-align: center;
-            clear: both;
-        }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AXION Assistant — Chat</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b1020;--card:#0f1724;--muted:#9aa4b2;--accent:#06b6d4;--glass:rgba(255,255,255,0.03);--sent:#082f2b}
+*{box-sizing:border-box}html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial;background:linear-gradient(180deg,#02030a 0%,#071426 100%);color:#e6eef6;-webkit-font-smoothing:antialiased}
+.app{max-width:1100px;margin:28px auto;padding:18px;display:grid;grid-template-columns:300px 1fr;gap:18px}
+.panel{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 8px 30px rgba(2,6,23,0.6)}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#7c3aed);display:flex;align-items:center;justify-content:center;font-weight:800;color:#021226}
+.title{font-size:16px;margin:0}
+.subtitle{font-size:12px;color:var(--muted)}
+.controls{display:flex;flex-direction:column;gap:10px}
+.input,select,textarea,button{font-family:inherit}
+.kv{display:flex;gap:8px;align-items:center}
+.field{display:flex;flex-direction:column;gap:6px}
+.small{font-size:12px;color:var(--muted)}
+.keyInput{background:transparent;border:1px dashed rgba(255,255,255,0.04);padding:8px;border-radius:8px;color:#e6eef6}
+.row{display:flex;gap:8px;align-items:center}
+.btn{background:linear-gradient(90deg,var(--accent),#7c3aed);color:#021226;padding:8px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:700}
+.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px 10px;border-radius:10px;color:var(--muted);cursor:pointer}
+.convList{margin-top:10px;display:flex;flex-direction:column;gap:8px;max-height:56vh;overflow:auto;padding-right:4px}
+.convItem{padding:10px;border-radius:8px;background:rgba(255,255,255,0.01);cursor:pointer;border:1px solid transparent}
+.convItem.active{background:linear-gradient(90deg,rgba(6,182,212,0.06),rgba(124,58,237,0.04));border-color:rgba(6,182,212,0.08)}
+.metaRow{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.rightCol{display:flex;flex-direction:column;gap:12px}
+.chatHeader{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.02)}
+.chatWindow{height:66vh;border-radius:10px;background:linear-gradient(180deg,#02151a,#011017);padding:14px;overflow:auto;border:1px solid rgba(255,255,255,0.02)}
+.msg{max-width:78%;padding:10px;border-radius:10px;margin:8px 0;line-height:1.35}
+.user{margin-left:auto;background:linear-gradient(180deg,#064e46,#0c6f66);color:#eafff8;border-bottom-right-radius:3px}
+.assistant{margin-right:auto;background:rgba(255,255,255,0.03);color:#dff6f4;border-bottom-left-radius:3px}
+.pret{font-size:12px;color:var(--muted);margin-top:6px}
+.composer{display:flex;gap:8px;padding:10px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(255,255,255,0.00));align-items:center}
+.textarea{flex:1;resize:none;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit}
+.rowTools{display:flex;gap:8px;align-items:center}
+.footerNote{font-size:12px;color:var(--muted);text-align:center;margin-top:10px}
+.smallBtn{padding:6px 8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:var(--muted);cursor:pointer}
+.tag{font-size:11px;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,0.02);color:var(--muted)}
+@media (max-width:980px){.app{grid-template-columns:1fr;padding:12px}.convList{max-height:22vh}.chatWindow{height:48vh}}
+</style>
 </head>
 <body>
-    <header>
-        <h1>AI Agency | Discord Code Maker</h1>
-    </header>
-    <main>
-        <div class="container">
-            <h2>Discord Code Maker</h2>
-            <form>
-                <div class="input-group">
-                    <label for="bot-name">Bot Name:</label>
-                    <input type="text" id="bot-name" name="bot-name" placeholder="Enter bot name">
-                </div>
-                <div class="input-group">
-                    <label for="prefix">Prefix:</label>
-                    <input type="text" id="prefix" name="prefix" placeholder="Enter prefix">
-                </div>
-                <div class="input-group">
-                    <label for="commands">Commands:</label>
-                    <textarea id="commands" name="commands" placeholder="Enter commands"></textarea>
-                </div>
-                <button class="button" onclick="generateCode()">Generate Code</button>
-            </form>
-            <div id="code-output" style="margin-top: 2rem;"></div>
+<div class="app">
+  <div class="panel">
+    <div class="brand">
+      <div class="logo">AX</div>
+      <div>
+        <div class="title">AXION Assistant</div>
+        <div class="subtitle">Advanced Groq-powered chat • secure key in backend</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="field">
+        <div class="small">API Endpoint</div>
+        <input id="endpoint" class="keyInput" placeholder="/api/groq" value="/api/groq" />
+        <div class="small">Enter your proxy endpoint URL that forwards requests to Groq (keep key on server)</div>
+      </div>
+
+      <div class="field">
+        <div class="small">Assistant Persona</div>
+        <select id="persona" class="keyInput">
+          <option value="general">General Assistant</option>
+          <option value="developer">Developer Helper</option>
+          <option value="copy">Copywriter</option>
+          <option value="designer">UI/UX Designer</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <div style="flex:1">
+          <div class="small">Temperature</div>
+          <input id="temp" type="range" min="0" max="1" step="0.05" value="0.2" />
         </div>
-    </main>
-    <footer>
-        <p>Powered by Groq AI (Llama-3.1-8b-instant)</p>
-    </footer>
+        <div style="width:86px">
+          <div class="small">Max Tokens</div>
+          <input id="tokens" class="keyInput" value="800" />
+        </div>
+      </div>
 
-    <script>
-        // Groq AI API Key
-        const apiKey = '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';
+      <div class="row" style="justify-content:space-between">
+        <button id="newConv" class="btn">New Conversation</button>
+        <div style="display:flex;gap:8px">
+          <button id="export" class="ghost">Export</button>
+          <button id="clearAll" class="ghost">Clear All</button>
+        </div>
+      </div>
 
-        // Function to generate code
-        function generateCode() {
-            const botName = document.getElementById('bot-name').value;
-            const prefix = document.getElementById('prefix').value;
-            const commands = document.getElementById('commands').value;
+      <div class="metaRow" style="margin-top:8px">
+        <div class="small">Conversations</div>
+        <div class="tag" id="convCount">0</div>
+      </div>
 
-            // Create API request to Groq AI
-            const url = `https://api.groq.ai/v1/instant?lang=javascript&model=llama-3.1-8b-instant&prompt=Create a Discord bot in JavaScript with the following settings:\n\n${botName}\n\n${prefix}\n\n${commands}`;
-            fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${apiKey}`,
-                }
-            })
-            .then(response => response.text())
-            .then(data => {
-                // Output generated code
-                const codeOutput = document.getElementById('code-output');
-                codeOutput.innerHTML = data;
-            })
-            .catch(error => console.error(error));
-        }
-    </script>
+      <div class="convList" id="convList"></div>
+      <div class="footerNote">Note: Add a secure backend to proxy the Groq key. This client talks only to your endpoint.</div>
+    </div>
+  </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/groq-ai@1.0.0/dist/groq-ai.min.js"></script>
+  <div class="panel rightCol">
+    <div class="chatHeader">
+      <div>
+        <div id="convTitle" style="font-weight:700">Welcome to AXION Assistant</div>
+        <div class="pret" id="convSubtitle">Start a conversation or create a new one</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div class="small">Persona:</div>
+        <div id="activePersona" class="tag">General Assistant</div>
+      </div>
+    </div>
+
+    <div class="chatWindow" id="chatWindow"></div>
+
+    <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+      <div style="flex:1" class="composer">
+        <textarea id="input" class="textarea" placeholder="Ask AXION anything (Shift+Enter for newline)."></textarea>
+        <div class="rowTools">
+          <button id="sendBtn" class="btn">Send</button>
+          <button id="saveBtn" class="smallBtn">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+      <div class="small">Status: <span id="status">idle</span></div>
+      <div style="display:flex;gap:8px">
+        <button id="downloadConv" class="ghost">Download</button>
+        <button id="renameConv" class="ghost">Rename</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const endpointEl=document.getElementById('endpoint')
+const personaEl=document.getElementById('persona')
+const tempEl=document.getElementById('temp')
+const tokensEl=document.getElementById('tokens')
+const newConvBtn=document.getElementById('newConv')
+const convListEl=document.getElementById('convList')
+const convCountEl=document.getElementById('convCount')
+const convTitleEl=document.getElementById('convTitle')
+const convSubtitleEl=document.getElementById('convSubtitle')
+const chatWindowEl=document.getElementById('chatWindow')
+const inputEl=document.getElementById('input')
+const sendBtn=document.getElementById('sendBtn')
+const statusEl=document.getElementById('status')
+const exportBtn=document.getElementById('export')
+const clearAllBtn=document.getElementById('clearAll')
+const saveBtn=document.getElementById('saveBtn')
+const downloadConvBtn=document.getElementById('downloadConv')
+const renameConvBtn=document.getElementById('renameConv')
+const activePersonaEl=document.getElementById('activePersona')
+
+let conversations=JSON.parse(localStorage.getItem('ax_conversations')||'[]')
+let activeId=null
+function uid(){return 'c_'+Math.random().toString(36).slice(2,9)}
+function renderConvList(){
+  convListEl.innerHTML=''
+  conversations.forEach(conv=>{
+    const d=document.createElement('div')
+    d.className='convItem'+(conv.id===activeId?' active':'')
+    d.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><div style="font-weight:600">${conv.title}</div><div style="font-size:12px;color:var(--muted)">${conv.messages.length} msgs</div></div><div class="small" style="margin-top:6px;color:var(--muted)">${conv.preview||''}</div>`
+    d.onclick=()=>{selectConversation(conv.id)}
+    convListEl.appendChild(d)
+  })
+  convCountEl.textContent=conversations.length
+}
+function saveAll(){localStorage.setItem('ax_conversations',JSON.stringify(conversations))}
+function createConversation(name){
+  const conv={id:uid(),title:name||'New Conversation',messages:[],preview:'',created:Date.now()}
+  conversations.unshift(conv)
+  activeId=conv.id
+  saveAll()
+  renderConvList()
+  renderActive()
+}
+function selectConversation(id){
+  activeId=id
+  renderConvList()
+  renderActive()
+}
+function renderActive(){
+  const conv=conversations.find(c=>c.id===activeId)
+  if(!conv){convTitleEl.textContent='Welcome to AXION Assistant';convSubtitleEl.textContent='Start a conversation or create a new one';chatWindowEl.innerHTML='';return}
+  convTitleEl.textContent=conv.title
+  convSubtitleEl.textContent=new Date(conv.created).toLocaleString()
+  activePersonaEl.textContent=personaEl.options[personaEl.selectedIndex].text
+  chatWindowEl.innerHTML=''
+  conv.messages.forEach(m=>{
+    const b=document.createElement('div');b.className='msg '+(m.role==='user'?'user':'assistant');b.innerHTML=`<div style="white-space:pre-wrap">${m.content}</div>`;chatWindowEl.appendChild(b)
+  })
+  chatWindowEl.scrollTop=chatWindowEl.scrollHeight
+}
+function appendMessage(role,text,saveToConv=true){
+  const conv=conversations.find(c=>c.id===activeId)
+  if(!conv) return
+  if(saveToConv) conv.messages.push({role,content:text})
+  conv.preview=text.slice(0,120).replace(/\n/g,' ')
+  saveAll()
+  renderActive()
+  renderConvList()
+}
+function setStatus(t){statusEl.textContent=t}
+newConvBtn.addEventListener('click',()=>{createConversation('Conversation '+(conversations.length+1))})
+exportBtn.addEventListener('click',()=>{
+  const data=JSON.stringify(conversations,null,2)
+  const blob=new Blob([data],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='axion_conversations.json';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url)
+})
+clearAllBtn.addEventListener('click',()=>{
+  if(!confirm('Clear all conversations?')) return
+  conversations=[];activeId=null;saveAll();renderConvList();renderActive()
+})
+saveBtn.addEventListener('click',()=>{saveAll();setStatus('Saved locally')})
+downloadConvBtn.addEventListener('click',()=>{
+  const conv=conversations.find(c=>c.id===activeId);if(!conv) return
+  const data=new Blob([JSON.stringify(conv,null,2)],{type:'application/json'});const url=URL.createObjectURL(data);const a=document.createElement('a');a.href=url;a.download=(conv.title||'conversation')+'.json';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url)
+})
+renameConvBtn.addEventListener('click',()=>{
+  const conv=conversations.find(c=>c.id===activeId);if(!conv) return
+  const n=prompt('Rename conversation',conv.title);if(n){conv.title=n;saveAll();renderConvList();renderActive()}
+})
+
+sendBtn.addEventListener('click',sendMessage)
+inputEl.addEventListener('keydown',e=>{if(e.key==='Enter' && !e.shiftKey){e.preventDefault();sendMessage()}})
+
+async function sendMessage(){
+  const text=inputEl.value.trim();if(!text) return
+  if(!activeId){createConversation('Conversation '+(conversations.length+1))}
+  appendMessage('user',text)
+  inputEl.value='';setStatus('sending...')
+  try{
+    const conv=conversations.find(c=>c.id===activeId)
+    const persona=personaEl.value
+    const messages=conv.messages.map(m=>({role:m.role,content:m.content}))
+    messages.push({role:'system',content:`You are AXION Assistant. Persona: ${persona}. Respond helpfully and concisely.`})
+    const body={messages,temperature:parseFloat(tempEl.value),max_tokens:parseInt(tokensEl.value)||800}
+    const endpoint=endpointEl.value || '/api/groq'
+    const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+    if(!res.ok){const t=await res.text();throw new Error(t||'Request failed')}
+    const data=await res.json()
+    const reply=extractReply(data)
+    appendMessage('assistant',reply)
+    setStatus('response received')
+  }catch(err){
+    appendMessage('assistant','Error: '+(err.message||err))
+    setStatus('error')
+  }
+}
+
+function extractReply(data){
+  if(!data) return 'No response'
+  if(typeof data === 'string') return data
+  if(data.output_text) return data.output_text
+  if(data.choices && data.choices[0]){
+    const c=data.choices[0]
+    if(c.message && c.message.content) return typeof c.message.content==='string'?c.message.content:JSON.stringify(c.message.content)
+    if(c.text) return c.text
+  }
+  if(data.output && Array.isArray(data.output) && data.output[0]){
+    const o=data.output[0]
+    if(o.content && Array.isArray(o.content)){
+      for(const part of o.content){
+        if(part.type==='output_text' && part.text) return part.text
+      }
+    }
+  }
+  return JSON.stringify(data)
+}
+
+window.addEventListener('load',()=>{
+  if(conversations.length===0) createConversation('Getting started')
+  else {activeId=conversations[0].id;renderConvList();renderActive()}
+})
+</script>
 </body>
 </html>
-```
-
-**Note:**
-
-* Replace `YOUR_GROQ_AI_API_KEY` with your actual Groq AI API key.
-* Make sure to include the Groq AI JavaScript library in your HTML file.
-* This code uses the Llama-3.1-8b-instant model, which is a powerful language model for generating code. However, please be aware that this model may not always produce perfect or even working code.
-* This code is for educational purposes only and should not be used in production without proper testing and validation.
-* The code generation process may take some time, depending on the complexity of the prompt and the model's processing power.
